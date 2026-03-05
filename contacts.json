@@ -1,0 +1,176 @@
+{
+  "vendors": [
+  {
+    "id": "v1",
+    "name": "Diwaan",
+    "category": "Grocery",
+    "deliveryTime": "45-60 mins",
+    "deliveryFee": "₹49",
+    "phone": "+918607846246",
+    "whatsapp": "+918607846246",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": "v2",
+    "name": "Azad",
+    "category": "Grocery",
+    "deliveryTime": "45-60 mins",
+    "deliveryFee": "₹49",
+    "phone": "+919315421193",
+    "whatsapp": "+919315421193",
+    "rating": 4.4,
+    "reviewCount": 0,
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": "v3",
+    "name": "Vikas",
+    "category": "Grocery",
+    "deliveryTime": "45-60 mins",
+    "deliveryFee": "₹49",
+    "phone": "+918950978191",
+    "whatsapp": "+918950978191",
+    "rating": 4.3,
+    "reviewCount": 0,
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": "v4",
+    "name": "Dhabha 24",
+    "category": "Dhaba",
+    "deliveryTime": "30-45 mins",
+    "deliveryFee": "₹39",
+    "phone": "+917206992551",
+    "whatsapp": "+917206992551",
+    "rating": 4.6,
+    "reviewCount": 0,
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": "v5",
+    "name": "Sahil",
+    "category": "Dhaba",
+    "deliveryTime": "30-45 mins",
+    "deliveryFee": "₹49",
+    "phone": "+919050098205",
+    "whatsapp": "+919050098205",
+    "rating": 4.2,
+    "reviewCount": 0,
+    "image": "https://via.placeholder.com/150"
+  }
+],
+  "drivers": [
+  {
+    "id": "d1",
+    "name": "Manav",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+918295009528",
+    "whatsapp": "+918295009528",
+    "rating": 4.7,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1001"
+  },
+  {
+    "id": "d2",
+    "name": "Rupesh",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+918685018042",
+    "whatsapp": "+918685018042",
+    "rating": 4.6,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1002"
+  },
+  {
+    "id": "d3",
+    "name": "Rohit Sharma",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+918571914068",
+    "whatsapp": "+918571914068",
+    "rating": 4.8,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1003"
+  },
+  {
+    "id": "d4",
+    "name": "Harsh Arora",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+919896841624",
+    "whatsapp": "+919896841624",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1004"
+  },
+  {
+    "id": "d5",
+    "name": "Vikram",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+918307676461",
+    "whatsapp": "+918307676461",
+    "rating": 4.4,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1005"
+  },
+  {
+    "id": "d6",
+    "name": "Vicky",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+919813587969",
+    "whatsapp": "+919813587969",
+    "rating": 4.3,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1006"
+  },
+  {
+    "id": "d7",
+    "name": "Moni",
+    "type": "Cab",
+    "priceRange": "₹250-350",
+    "phone": "+918607090200",
+    "whatsapp": "+918607090200",
+    "rating": 4.2,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AB-1007"
+  },
+  {
+    "id": "d8",
+    "name": "Sunil",
+    "type": "Auto",
+    "priceRange": "₹120-150",
+    "phone": "+918059758898",
+    "whatsapp": "+918059758898",
+    "rating": 4.6,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AT-2001"
+  },
+  {
+    "id": "d9",
+    "name": "Vicky Sharma",
+    "type": "Auto",
+    "priceRange": "₹120-150",
+    "phone": "+919588189013",
+    "whatsapp": "+919588189013",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AT-2002"
+  },
+  {
+    "id": "d10",
+    "name": "Shanvibudwar Shanu",
+    "type": "Auto",
+    "priceRange": "₹120-150",
+    "phone": "+917404343408",
+    "whatsapp": "+917404343408",
+    "rating": 4.4,
+    "reviewCount": 0,
+    "vehicleNumber": "HR-12-AT-2003"
+  }
+]
+}
