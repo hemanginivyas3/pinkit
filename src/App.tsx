@@ -31,7 +31,6 @@ import {
 } from 'lucide-react';
 import { Category, Vendor, Driver, CommunityPost, Review, RouteFare, EssentialService, RohtakSpot, PriceTag } from './types';
 import { ROHTAK_SPOTS } from './constants';
-import { dataService, AppData } from './services/dataService';
 
 // --- Components ---
 
