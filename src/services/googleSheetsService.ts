@@ -2,8 +2,6 @@
 // Convert Google Sheet to CSV format and fetch data
 
 const SHEET_ID = '1bIrYNa-MbLAT3PGMlQn6IHqjLsWZyK7y';
-const SHEET_NAME = 'Contacts'; // Change to your sheet name if different
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 
 interface SheetContact {
   name: string;
@@ -17,35 +15,73 @@ interface SheetContact {
 const googleSheetsService = {
   async fetchContactsFromSheet(): Promise<SheetContact[]> {
     try {
-      const response = await fetch(CSV_URL);
-      if (!response.ok) throw new Error('Failed to fetch sheet');
+      const allContacts: SheetContact[] = [];
       
-      const csvText = await response.text();
-      const lines = csvText.split('\n');
-      
-      const contacts: SheetContact[] = [];
-      
-      // Parse CSV (skip header row)
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        const [name, category, phone, whatsapp, description, verified] = lines[i]
-          .split(',')
-          .map(val => val.trim().replace(/^"|"$/g, ''));
-        
-        if (name && category && phone) {
-          contacts.push({
-            name,
-            category,
-            phone,
-            whatsapp: whatsapp || phone,
-            description: description || '',
-            verified: verified === 'TRUE' || verified === 'true'
+      // Try fetching from multiple sheet tabs (gid 0-10)
+      for (let gid = 0; gid <= 10; gid++) {
+        try {
+          const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+          const response = await fetch(CSV_URL, { 
+            headers: { 'Accept': 'text/csv' }
           });
+          
+          if (!response.ok) continue;
+          
+          const csvText = await response.text();
+          if (!csvText || csvText.length < 10) continue; // Skip empty sheets
+          
+          const lines = csvText.split('\n').map(line => line.trim()).filter(line => line);
+          
+          if (lines.length < 2) continue; // Need header + at least 1 data row
+          
+          // Parse header row - try multiple common header patterns
+          const headerRow = lines[0].toLowerCase();
+          const hasValidHeader = 
+            headerRow.includes('name') || 
+            headerRow.includes('contact') ||
+            headerRow.includes('service') ||
+            headerRow.includes('category') ||
+            headerRow.includes('phone');
+          
+          if (!hasValidHeader) continue;
+          
+          // Detect column positions dynamically
+          const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+          const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('contact') || h.includes('service'));
+          const categoryIdx = headers.findIndex(h => h.includes('category') || h.includes('type') || h.includes('service'));
+          const phoneIdx = headers.findIndex(h => h.includes('phone') || h.includes('number') || h.includes('contact'));
+          const descIdx = headers.findIndex(h => h.includes('desc') || h.includes('detail') || h.includes('info'));
+          
+          // Parse data rows
+          for (let i = 1; i < lines.length; i++) {
+            const fields = lines[i].split(',').map(f => f.trim().replace(/^"|"$/g, ''));
+            
+            if (fields.length < 2) continue;
+            
+            const name = nameIdx >= 0 && fields[nameIdx] ? fields[nameIdx].trim() : '';
+            const category = categoryIdx >= 0 && fields[categoryIdx] ? fields[categoryIdx].trim() : '';
+            const phone = phoneIdx >= 0 && fields[phoneIdx] ? fields[phoneIdx].trim() : '';
+            const description = descIdx >= 0 && fields[descIdx] ? fields[descIdx].trim() : '';
+            
+            if (name && category && phone) {
+              allContacts.push({
+                name,
+                category,
+                phone: phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '').slice(-10)}`,
+                whatsapp: phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '').slice(-10)}`,
+                description: description || '',
+                verified: true
+              });
+            }
+          }
+        } catch (err) {
+          // Continue to next sheet
+          continue;
         }
       }
       
-      return contacts;
+      // Return fetched data or empty array if none found
+      return allContacts;
     } catch (error) {
       console.error('Error fetching from Google Sheets:', error);
       return [];
