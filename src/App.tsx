@@ -284,7 +284,7 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
   <header className="sticky top-0 bg-gradient-to-r from-pink-soft via-pink-50 to-pink-soft/80 backdrop-blur-xl z-40 px-6 py-6 flex flex-col gap-6 border-b-2 border-pink-primary/20">
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/10 animate-float overflow-hidden border-2 border-pink-primary">
+        <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/10 overflow-hidden border-2 border-pink-primary">
           <img 
             src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
             alt="PinkIt Logo" 
@@ -293,10 +293,10 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
           />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-4xl font-black tracking-tighter text-pink-hot italic leading-none">
-            {title === 'Home' ? 'PinkIt' : title}
+          <h1 className="text-3xl font-black tracking-tighter text-pink-hot italic leading-none">
+            {title === 'PinkIt' ? '🎓 PinkIt' : title}
           </h1>
-          <p className="text-[10px] font-bold text-pink-primary/70">Campus vibes only 👋</p>
+          <p className="text-[9px] font-bold text-pink-primary/60 uppercase tracking-widest">Campus Legends Only</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -304,12 +304,13 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
           <button 
             onClick={onRefresh}
             className={`p-3 rounded-2xl bg-white text-slate-400 shadow-sm border border-pink-100 transition-all active:scale-90 ${isLoading ? 'animate-spin text-pink-primary' : ''}`}
+            title="Refresh data"
           >
             <History size={20} />
           </button>
         )}
-        <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-pink-primary font-black border-2 border-pink-100 shadow-sm uppercase text-sm tracking-tighter">
-          {user?.name?.substring(0, 2) || 'JD'}
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-soft to-pink-primary/20 flex items-center justify-center text-pink-primary font-black border-2 border-pink-100 shadow-sm uppercase text-sm tracking-tighter">
+          {user?.name?.substring(0, 2)?.toUpperCase() || 'JD'}
         </div>
       </div>
     </div>
@@ -703,54 +704,65 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
 
       <div className="flex flex-col gap-6">
         {filteredVendors.length === 0 && selectedCategory && (
-          <div className="text-center py-12 bg-white/50 rounded-[40px] border border-dashed border-pink-200">
-            <p className="text-slate-400 font-bold mb-4">No legends found in this category yet.</p>
-            <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline">Be the first to suggest!</button>
+          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+            <p className="text-slate-600 font-black text-lg mb-4">📭 No contacts found</p>
+            <p className="text-slate-400 font-bold text-sm mb-6">No legends in this category yet.</p>
+            <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Be the first to add!</button>
+          </div>
+        )}
+        {filteredVendors.length === 0 && !selectedCategory && (
+          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+            <p className="text-slate-600 font-black text-lg mb-4">🔍 No results</p>
+            <p className="text-slate-400 font-bold text-sm">Try a different search or select a category above</p>
           </div>
         )}
         {filteredVendors.map((v) => (
           <motion.div 
             key={v.id} 
             whileHover={{ scale: 1.02, y: -4 }}
-            className="bg-white/95 backdrop-blur-sm rounded-[32px] p-6 shadow-md border-2 border-pink-primary/20 relative overflow-hidden group hover:shadow-xl transition-all"
+            className="bg-white/98 backdrop-blur-sm rounded-[32px] p-6 shadow-md border-2 border-pink-primary/20 relative overflow-hidden group hover:shadow-xl hover:border-pink-primary/40 transition-all"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-soft/40 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-300" />
-            <div className="flex items-center gap-5 mb-6 relative z-10">
-              <div className="w-20 h-20 bg-gradient-to-br from-pink-soft to-pink-primary/20 rounded-[24px] flex items-center justify-center text-5xl shadow-md border-2 border-pink-primary/30">
+            <div className="flex items-start gap-5 mb-6 relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-pink-soft to-pink-primary/20 rounded-[24px] flex items-center justify-center text-5xl shadow-md border-2 border-pink-primary/30 flex-shrink-0">
                 {getEmoji(v.category)}
               </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-black text-xl tracking-tight text-slate-900">{v.name}</h3>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start mb-2 gap-2">
+                  <h3 className="font-black text-lg tracking-tight text-slate-900 break-words">{v.name}</h3>
                   {v.isVerified && <VerifiedBadge />}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-black bg-teal-soft text-teal-primary px-3 py-1 rounded-full uppercase tracking-widest">⭐ {v.category}</span>
-                  {v.rating && <span className="text-[11px] font-black text-yellow-600">⭐ {v.rating}</span>}
+                <div className="flex items-center gap-2 flex-wrap mb-3">
+                  <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{v.category}</span>
+                  {v.rating && <span className="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">⭐ {v.rating}</span>}
+                </div>
+                <div className="bg-pink-50 px-4 py-2.5 rounded-xl mb-3">
+                  <p className="text-xs font-black text-pink-primary tracking-wide break-all">{v.phone}</p>
+                  {v.description && <p className="text-xs text-slate-600 font-bold mt-1 line-clamp-1">{v.description}</p>}
                 </div>
               </div>
             </div>
             
-            <div className="flex gap-3 relative z-10">
+            <div className="flex gap-3 relative z-10 mb-3">
               <a 
                 href={`tel:${v.phone}`}
-                className="flex-1 bg-gradient-to-r from-pink-primary to-pink-600 hover:shadow-lg text-white font-black py-4 rounded-[20px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
+                className="flex-1 bg-gradient-to-r from-pink-primary to-pink-600 hover:shadow-lg text-white font-black py-3.5 rounded-[18px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
               >
                 <Phone size={16} />
-                Call
+                Call Now
               </a>
               <a 
-                href={`https://wa.me/${v.whatsapp.replace('+', '')}`}
+                href={`https://wa.me/${v.whatsapp?.replace(/[^0-9]/g, '') || v.phone?.replace(/[^0-9]/g, '') || ''}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 bg-gradient-to-r from-teal-primary to-teal-600 hover:shadow-lg text-white font-black py-4 rounded-[20px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
+                className="flex-1 bg-gradient-to-r from-teal-primary to-teal-600 hover:shadow-lg text-white font-black py-3.5 rounded-[18px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
               >
                 <MessageCircle size={16} />
-                WhatsApp
+                Chat
               </a>
             </div>
             
-            <div className="flex gap-2 mt-4 relative z-10">
+            <div className="flex gap-2 relative z-10">
               <button 
                 onClick={() => onReview(v)}
                 className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all"
@@ -758,7 +770,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
                 ⭐ Review
               </button>
               <button className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                📦 Bulk
+                ➕ Save
               </button>
             </div>
           </motion.div>
@@ -1485,8 +1497,8 @@ export default function App() {
 
   const getPageTitle = () => {
     switch (activeTab) {
-      case 'home': return 'Home';
-      case 'services': return 'Services';
+      case 'home': return 'PinkIt';
+      case 'services': return selectedCategory ? `${selectedCategory}` : 'Services';
       case 'transport': return 'Transport';
       case 'community': return 'Community';
       case 'profile': return 'Profile';

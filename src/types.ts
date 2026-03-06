@@ -56,6 +56,7 @@ export interface Vendor {
   priceTag?: PriceTag;
   menu?: MenuItem[];
   isVerified?: boolean;
+  description?: string;
 }
 
 export interface Driver {
