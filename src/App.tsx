@@ -145,18 +145,18 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
             onClick={() => setType('Ride')}
             className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${type === 'Ride' ? 'bg-pink-primary text-white shadow-lg' : 'text-pink-primary'}`}
           >
-            Ride Pool ≡ƒÜò
+            🛵 Ride Pool
           </button>
           <button 
             onClick={() => setType('Order')}
             className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${type === 'Order' ? 'bg-teal-primary text-white shadow-lg' : 'text-teal-primary'}`}
           >
-            Order Pool ≡ƒìö
+            🍕 Order Pool
           </button>
         </div>
 
         <h3 className="text-3xl font-black mb-2 italic tracking-tighter text-slate-900">
-          {type === 'Ride' ? 'Split a Ride? ≡ƒÜò' : 'Pool an Order? ≡ƒìö'}
+          {type === 'Ride' ? '🛵 Split a Ride?' : '🍕 Pool an Order?'}
         </h3>
         <p className="text-slate-500 mb-8 font-bold">
           {type === 'Ride' ? 'Find legends to split the fare with.' : 'Save on delivery fees with the community.'}
@@ -281,10 +281,10 @@ const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTa
 };
 
 const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, user }: { title: string, showSearch?: boolean, onSearch?: (query: string) => void, onRefresh?: () => void, isLoading?: boolean, user?: { name: string } }) => (
-  <header className="sticky top-0 bg-pink-soft/80 backdrop-blur-xl z-40 px-6 py-6 flex flex-col gap-6 border-b border-pink-100">
+  <header className="sticky top-0 bg-gradient-to-r from-pink-soft via-pink-50 to-pink-soft/80 backdrop-blur-xl z-40 px-6 py-6 flex flex-col gap-6 border-b-2 border-pink-primary/20">
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/10 animate-float overflow-hidden border border-pink-100">
+        <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/10 animate-float overflow-hidden border-2 border-pink-primary">
           <img 
             src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
             alt="PinkIt Logo" 
@@ -292,9 +292,12 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
             referrerPolicy="no-referrer"
           />
         </div>
-        <h1 className="text-3xl font-black tracking-tighter text-slate-900 italic">
-          {title === 'Home' ? <span className="text-pink-hot">PinkIt</span> : title}
-        </h1>
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-black tracking-tighter text-pink-hot italic leading-none">
+            {title === 'Home' ? 'PinkIt' : title}
+          </h1>
+          <p className="text-[10px] font-bold text-pink-primary/70">Campus vibes only 👋</p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         {onRefresh && (
@@ -312,11 +315,11 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
     </div>
     {showSearch && (
       <div className="relative group">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-primary transition-colors" size={18} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-primary group-focus-within:text-pink-hot transition-colors" size={20} />
         <input 
           type="text" 
-          placeholder="Search for vibes... ΓÜí" 
-          className="w-full bg-white rounded-2xl py-4 pl-12 pr-4 text-sm font-bold shadow-sm border border-pink-100 focus:outline-none focus:border-pink-primary/30 transition-all"
+          placeholder="🔍 Search vibes, legends..." 
+          className="w-full bg-white rounded-2xl py-4 pl-12 pr-4 text-sm font-bold shadow-md border-2 border-pink-primary/20 focus:outline-none focus:border-pink-primary/50 transition-all placeholder:text-slate-400"
           onChange={(e) => onSearch?.(e.target.value)}
         />
       </div>
@@ -357,8 +360,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative z-10 text-6xl font-black text-white mb-2 italic tracking-tighter drop-shadow-2xl"
-      >
+        className="relative z-10 text-6xl font-black text-white mb-2 italic tracking-tighter drop-shadow-2xl\">
         PinkIt
       </motion.h1>
       <motion.p 
@@ -367,7 +369,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         transition={{ delay: 0.3 }}
         className="relative z-10 text-pink-soft mb-12 text-center font-bold drop-shadow-lg"
       >
-        Campus coordination, <span className="text-pink-primary">simplified.</span> ΓÜí
+        Campus coordination, <span className="text-pink-primary font-black">simplified.</span> 🎯
       </motion.p>
       
       <motion.div 
@@ -406,7 +408,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         disabled={!name || !email}
         className="relative z-10 w-full max-w-sm py-5 bg-pink-primary text-white font-black rounded-[24px] shadow-2xl shadow-pink-primary/40 disabled:opacity-50 transition-all active:scale-95 uppercase tracking-widest text-sm"
       >
-        Let's Go! ≡ƒÜÇ
+        Let's Go! 🚀
       </motion.button>
     </div>
   );
@@ -415,12 +417,12 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
 const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat: Category) => void, vendors: Vendor[], drivers: Driver[] }) => {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const quotes = [
-    "10 km away. 1 tap closer. ≡ƒÜÇ",
-    "Community > Commission. ≡ƒñ¥",
-    "Built by students. For legends. ≡ƒÄô",
-    "Rohtak to Campus, simplified. ΓÜí",
-    "Don't walk. PinkIt. ≡ƒÜò",
-    "Your campus, your rules. ≡ƒÄÇ"
+    "10 km away. 1 tap closer. 🚀",
+    "Community > Commission. 💪",
+    "Built by students. For legends. 🎓",
+    "Rohtak to Campus, simplified. 🎯",
+    "Don't walk. PinkIt. 🛵",
+    "Your campus, your rules. 🤝"
   ];
 
   useEffect(() => {
@@ -431,14 +433,14 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
   }, [quotes.length]);
 
   const categories: { name: Category | 'More', icon: string, color: string }[] = [
-    { name: 'Grocery', icon: '≡ƒ¢Æ', color: 'bg-pink-soft text-pink-primary' },
-    { name: 'Dhaba', icon: '≡ƒÑÿ', color: 'bg-teal-soft text-teal-primary' },
-    { name: 'Street Food', icon: '≡ƒìö', color: 'bg-pink-soft text-pink-primary' },
-    { name: 'Auto', icon: '≡ƒ¢║', color: 'bg-teal-soft text-teal-primary' },
-    { name: 'Cab', icon: '≡ƒÜò', color: 'bg-pink-soft text-pink-primary' },
-    { name: 'Parcel', icon: '≡ƒôª', color: 'bg-teal-soft text-teal-primary' },
-    { name: 'Pharmacy', icon: '≡ƒÆè', color: 'bg-pink-soft text-pink-primary' },
-    { name: 'More', icon: 'Γ£¿', color: 'bg-slate-100 text-slate-400' },
+    { name: 'Grocery', icon: '🛒', color: 'bg-pink-soft text-pink-primary' },
+    { name: 'Dhaba', icon: '🍛', color: 'bg-teal-soft text-teal-primary' },
+    { name: 'Street Food', icon: '🌮', color: 'bg-pink-soft text-pink-primary' },
+    { name: 'Auto', icon: '🛵', color: 'bg-teal-soft text-teal-primary' },
+    { name: 'Cab', icon: '🚖', color: 'bg-pink-soft text-pink-primary' },
+    { name: 'Parcel', icon: '📦', color: 'bg-teal-soft text-teal-primary' },
+    { name: 'Pharmacy', icon: '💊', color: 'bg-pink-soft text-pink-primary' },
+    { name: 'More', icon: '➕', color: 'bg-slate-100 text-slate-400' },
   ];
 
   return (
@@ -472,28 +474,30 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
           </AnimatePresence>
         </div>
         <div className="absolute right-8 bottom-8 text-4xl opacity-40 group-hover:opacity-100 transition-opacity duration-500 drop-shadow-lg">
-          ≡ƒÆû
+          ✨
         </div>
       </div>
 
       {/* Category Grid */}
-      <h2 className="text-xl font-black mb-6 italic text-pink-hot tracking-tighter">Quick Fixes ΓÜí</h2>
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <h2 className="text-2xl font-black mb-6 italic text-pink-hot tracking-tighter">⚡ Quick Fixes</h2>
+      <div className="grid grid-cols-4 gap-3 mb-10">
         {categories.map((cat) => (
-          <button 
+          <motion.button 
             key={cat.name}
             onClick={() => cat.name === 'More' ? onCategoryClick(null as any) : onCategoryClick(cat.name as Category)}
-            className="flex flex-col items-center gap-2 group"
+            className="flex flex-col items-center gap-2 group transform hover:scale-105 transition-transform"
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.95 }}
           >
             <motion.div 
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={{ scale: 1.15, rotate: 8 }}
               whileTap={{ scale: 0.9 }}
-              className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center shadow-sm text-2xl`}
+              className={`w-16 h-16 rounded-2xl ${cat.color} flex items-center justify-center shadow-lg text-4xl font-bold transform group-hover:shadow-xl group-hover:brightness-110 transition-all`}
             >
               {cat.icon}
             </motion.div>
-            <span className="text-[10px] font-black text-slate-600 text-center uppercase tracking-tighter">{cat.name}</span>
-          </button>
+            <span className="text-[9px] font-black text-slate-700 text-center uppercase tracking-tighter leading-tight">{cat.name}</span>
+          </motion.button>
         ))}
       </div>
 
@@ -548,7 +552,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
         exit={{ y: 100 }}
         className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
       >
-        <h3 className="text-3xl font-black mb-2 italic tracking-tighter">Refer a Vibe Γ£¿</h3>
+        <h3 className="text-3xl font-black mb-2 italic tracking-tighter">💡 Refer a Vibe</h3>
         <p className="text-slate-500 mb-8 font-bold">Help the community grow by adding a trusted service.</p>
         
         <div className="flex flex-col gap-6 mb-10">
@@ -613,7 +617,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
             }}
             className="flex-1 py-5 bg-pink-primary text-white font-black rounded-[24px] shadow-2xl shadow-pink-primary/30 uppercase tracking-widest text-xs"
           >
-            Submit ≡ƒÜÇ
+            Submit 🎯
           </button>
         </div>
       </motion.div>
@@ -632,22 +636,22 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
 
   const getEmoji = (cat: string) => {
     switch (cat) {
-      case 'Grocery': return '≡ƒ¢Æ';
-      case 'Dhaba': return '≡ƒÑÿ';
-      case 'Street Food': return '≡ƒìö';
-      case 'Auto': return '≡ƒ¢║';
-      case 'Cab': return '≡ƒÜò';
-      case 'Parcel': return '≡ƒôª';
-      case 'Pharmacy': return '≡ƒÆè';
-      case 'Hospital': return '≡ƒÅÑ';
-      case 'Salon': return 'Γ£é∩╕Å';
-      case 'Laundry': return '≡ƒº║';
-      case 'Tailor': return '≡ƒ¬í';
-      case 'Flowers': return '≡ƒÆÉ';
-      case 'Delivery': return '≡ƒ¢╡';
-      case 'Tech Repair': return '≡ƒÆ╗';
-      case 'Mobile': return '≡ƒô▒';
-      default: return 'Γ£¿';
+      case 'Grocery': return '🛒';
+      case 'Dhaba': return '🍛';
+      case 'Street Food': return '🌮';
+      case 'Auto': return '🛵';
+      case 'Cab': return '🚖';
+      case 'Parcel': return '📦';
+      case 'Pharmacy': return '💊';
+      case 'Hospital': return '🏥';
+      case 'Salon': return '✂️';
+      case 'Laundry': return '🧺';
+      case 'Tailor': return '👔';
+      case 'Flowers': return '💐';
+      case 'Delivery': return '🚚';
+      case 'Tech Repair': return '🔧';
+      case 'Mobile': return '📱';
+      default: return '✨';
     }
   };
 
@@ -666,7 +670,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
             </button>
           )}
           <h2 className="text-2xl font-black italic tracking-tighter text-pink-hot">
-            {selectedCategory ? `${getEmoji(selectedCategory)} ${selectedCategory}` : 'All Vibes ΓÜí'}
+            {selectedCategory ? `${getEmoji(selectedCategory)} ${selectedCategory}` : '✨ All Vibes'}
           </h2>
         </div>
         <button 
@@ -674,7 +678,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
           className="p-3 bg-pink-primary text-white rounded-2xl flex items-center gap-2 text-xs font-black uppercase tracking-widest shadow-lg shadow-pink-primary/20 active:scale-95 transition-all"
         >
           <PlusCircle size={18} />
-          Add Vibe
+          🎯 Add Vibe
         </button>
       </div>
 
@@ -707,53 +711,54 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
         {filteredVendors.map((v) => (
           <motion.div 
             key={v.id} 
-            whileHover={{ scale: 1.02 }}
-            className="bg-white rounded-[40px] p-8 shadow-sm border border-pink-100 relative overflow-hidden group"
+            whileHover={{ scale: 1.02, y: -4 }}
+            className="bg-white/95 backdrop-blur-sm rounded-[32px] p-6 shadow-md border-2 border-pink-primary/20 relative overflow-hidden group hover:shadow-xl transition-all"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-soft/50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
-            <div className="flex items-center gap-6 mb-8 relative z-10">
-              <div className="w-20 h-20 bg-pink-soft rounded-[28px] flex items-center justify-center text-4xl shadow-inner">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-soft/40 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-300" />
+            <div className="flex items-center gap-5 mb-6 relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-pink-soft to-pink-primary/20 rounded-[24px] flex items-center justify-center text-5xl shadow-md border-2 border-pink-primary/30">
                 {getEmoji(v.category)}
               </div>
               <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-black text-2xl tracking-tighter text-slate-900">{v.name}</h3>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-3 py-1 rounded-full uppercase tracking-widest">{v.category}</span>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-black text-xl tracking-tight text-slate-900">{v.name}</h3>
                   {v.isVerified && <VerifiedBadge />}
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] font-black bg-teal-soft text-teal-primary px-3 py-1 rounded-full uppercase tracking-widest">⭐ {v.category}</span>
+                  {v.rating && <span className="text-[11px] font-black text-yellow-600">⭐ {v.rating}</span>}
                 </div>
               </div>
             </div>
             
-            <div className="flex gap-4 relative z-10">
+            <div className="flex gap-3 relative z-10">
               <a 
                 href={`tel:${v.phone}`}
-                className="flex-1 bg-pink-primary text-white font-black py-5 rounded-[24px] flex items-center justify-center gap-2 shadow-xl shadow-pink-primary/20 active:scale-95 transition-all uppercase tracking-widest text-xs"
+                className="flex-1 bg-gradient-to-r from-pink-primary to-pink-600 hover:shadow-lg text-white font-black py-4 rounded-[20px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
               >
-                <Phone size={18} />
-                Call Now
+                <Phone size={16} />
+                Call
               </a>
               <a 
                 href={`https://wa.me/${v.whatsapp.replace('+', '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 bg-teal-primary text-white font-black py-5 rounded-[24px] flex items-center justify-center gap-2 shadow-xl shadow-teal-primary/20 active:scale-95 transition-all uppercase tracking-widest text-xs"
+                className="flex-1 bg-gradient-to-r from-teal-primary to-teal-600 hover:shadow-lg text-white font-black py-4 rounded-[20px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
               >
-                <MessageCircle size={18} />
+                <MessageCircle size={16} />
                 WhatsApp
               </a>
             </div>
             
-            <div className="flex gap-3 mt-6 relative z-10">
+            <div className="flex gap-2 mt-4 relative z-10">
               <button 
                 onClick={() => onReview(v)}
-                className="flex-1 py-4 text-slate-500 font-black text-[10px] bg-slate-100 rounded-2xl uppercase tracking-widest active:scale-95 transition-all"
+                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all"
               >
-                Leave Review
+                ⭐ Review
               </button>
-              <button className="flex-1 py-4 text-pink-primary font-black text-[10px] bg-pink-soft rounded-2xl uppercase tracking-widest active:scale-95 transition-all">
-                Bulk Order
+              <button className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                📦 Bulk
               </button>
             </div>
           </motion.div>
@@ -779,7 +784,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
     >
       <div className="bg-pink-primary rounded-[40px] p-8 text-white mb-8 vibrant-shadow relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-        <h2 className="text-3xl font-black mb-2 italic">Campus Rides ≡ƒ¢║</h2>
+        <h2 className="text-3xl font-black mb-2 italic">🛵 Campus Rides</h2>
         <p className="text-pink-soft text-sm font-bold opacity-80">Direct contact with trusted drivers.</p>
       </div>
 
@@ -851,7 +856,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
                 onClick={onPostRide}
                 className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft rounded-xl uppercase tracking-wider"
               >
-                Share Ride
+                🛵 Share Ride
               </button>
             </div>
           </motion.div>
@@ -878,21 +883,21 @@ const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, u
           className="flex-shrink-0 px-6 py-3 bg-pink-primary text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-pink-primary/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
         >
           <Car size={16} />
-          Pool Ride
+          🛵 Pool Ride
         </button>
         <button 
-          onClick={() => setMessage('I am ordering from [Place]. Anyone wants to pool? ≡ƒìö')}
+          onClick={() => setMessage('I am ordering from [Place]. Anyone wants to pool? 🍕')}
           className="flex-shrink-0 px-6 py-3 bg-teal-primary text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-teal-primary/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
         >
           <ShoppingBag size={16} />
-          Pool Order
+          🍕 Pool Order
         </button>
         <button 
           onClick={onPostReview}
           className="flex-shrink-0 px-6 py-3 bg-slate-900 text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-900/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
         >
           <Star size={16} />
-          Review
+          ⭐ Review
         </button>
       </div>
 
@@ -961,7 +966,7 @@ const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, u
                         : isMe ? 'bg-white/20 text-white' : 'bg-pink-soft text-pink-primary'
                     }`}
                   >
-                    {post.interestedUsers?.includes('You') ? 'Joined! Γ£à' : "I'm In! ≡ƒÜÇ"}
+                    {post.interestedUsers?.includes('You') ? '✅ Joined!' : "🙋 I'm In!"}
                   </button>
                 </div>
               </div>
@@ -1084,25 +1089,25 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
           onClick={() => setShowFeedback(true)}
           className="w-full py-5 bg-white text-pink-primary font-black rounded-[24px] shadow-sm border border-pink-100 uppercase tracking-widest text-xs active:scale-95 transition-all"
         >
-          Rate Experience ≡ƒÆû
+          😊 Rate Experience
         </button>
         <button 
           onClick={() => setShowComplaint(true)}
           className="w-full py-5 bg-slate-900 text-white font-black rounded-[24px] shadow-2xl shadow-slate-900/20 uppercase tracking-widest text-xs active:scale-95 transition-all"
         >
-          Raise a Complaint ≡ƒÜ¿
+          ⚠️ Raise a Complaint
         </button>
         <button 
           onClick={onLogout}
           className="w-full py-5 bg-slate-100 text-slate-400 font-black rounded-[24px] uppercase tracking-widest text-xs active:scale-95 transition-all"
         >
-          Logout ≡ƒæï
+          👋 Logout
         </button>
       </div>
 
       <div className="mt-12 p-8 bg-pink-soft/50 rounded-[40px] border border-pink-100/50">
         <p className="text-[10px] text-pink-primary/40 text-center leading-relaxed uppercase font-black tracking-[0.2em]">
-          PinkIt v2.0.0 ΓÇó Built for Legends ≡ƒÄô
+          PinkIt v2.0.0 • Built for Legends 🎓
         </p>
       </div>
 
