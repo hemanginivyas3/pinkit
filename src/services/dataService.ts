@@ -6,7 +6,13 @@ const dataService = {
   async fetchData(force = false) {
     try {
       // Fetch from Google Sheets
-      const sheetContacts = await googleSheetsService.fetchContactsFromSheet();
+      let sheetContacts = await googleSheetsService.fetchContactsFromSheet();
+      
+      // If Google Sheets fetch failed, use sample data
+      if (!sheetContacts || sheetContacts.length === 0) {
+        console.warn("Google Sheets data empty, using sample data");
+        sheetContacts = googleSheetsService.generateSampleContacts();
+      }
       
       // Fetch Firebase data (community posts, complaints, etc.)
       const vendorsSnapshot = await getDocs(collection(db, "vendors"));

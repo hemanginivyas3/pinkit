@@ -226,7 +226,7 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
             }}
             className={`flex-1 py-5 text-white font-black rounded-[24px] shadow-2xl uppercase tracking-widest text-xs ${type === 'Ride' ? 'bg-pink-primary shadow-pink-primary/30' : 'bg-teal-primary shadow-teal-primary/30'}`}
           >
-            Post Request ≡ƒÜÇ
+            Post Request 📝
           </button>
         </div>
       </motion.div>
@@ -236,11 +236,11 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
 
 const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) => {
   const tabs = [
-    { id: 'home', label: 'Home', icon: HomeIcon, emoji: '≡ƒÅá' },
-    { id: 'services', label: 'Services', icon: LayoutGrid, emoji: '≡ƒì▒' },
-    { id: 'transport', label: 'Transport', icon: Car, emoji: '≡ƒ¢║' },
-    { id: 'community', label: 'Community', icon: Users, emoji: '≡ƒæÑ' },
-    { id: 'profile', label: 'Profile', icon: User, emoji: '≡ƒæñ' },
+    { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
+    { id: 'services', label: 'Services', icon: LayoutGrid, emoji: '🛒' },
+    { id: 'transport', label: 'Transport', icon: Car, emoji: '🚗' },
+    { id: 'community', label: 'Community', icon: Users, emoji: '👥' },
+    { id: 'profile', label: 'Profile', icon: User, emoji: '👤' },
   ];
 
   return (
@@ -504,7 +504,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
       {/* Rohtak Spots Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-black italic text-pink-hot">Rohtak Vibe Check ΓÜí</h2>
+          <h2 className="text-xl font-black italic text-pink-hot">Rohtak Vibe Check ✨</h2>
           <span className="text-[10px] font-black bg-pink-primary text-white px-2 py-1 rounded-full uppercase">Top Picks</span>
         </div>
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
@@ -594,7 +594,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
           <div>
             <label className="text-[10px] font-black text-pink-primary uppercase mb-2 block ml-4 tracking-widest">Any details? (Menu, Rates, etc.)</label>
             <textarea 
-              placeholder="e.g. Best for alterations, charges Γé╣50"
+              placeholder="e.g. Best for alterations, charges ₹50"
               className="w-full bg-pink-soft/50 rounded-[24px] p-5 text-sm font-bold focus:outline-none border-2 border-transparent focus:border-pink-primary/20 shadow-sm"
               rows={3}
               value={description}
@@ -814,7 +814,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-teal-soft rounded-2xl flex items-center justify-center text-3xl">
-                  {d.type === 'Auto' ? '≡ƒ¢║' : '≡ƒÜò'}
+                  {d.type === 'Auto' ? '🚗' : '🛵'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -993,7 +993,7 @@ const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, u
         <div className="flex-1 relative">
           <input 
             type="text" 
-            placeholder="Type a vibe... ΓÜí" 
+            placeholder="Type a vibe... ✨" 
             className="w-full bg-pink-soft/50 rounded-2xl py-4 px-6 text-sm font-bold focus:outline-none border-2 border-transparent focus:border-pink-primary/20 transition-all"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -1131,11 +1131,11 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               
               <div className="flex justify-between mb-8">
                 {[
-                  { emoji: '≡ƒÿì', label: 'Loved it' },
-                  { emoji: '≡ƒÖé', label: 'Good' },
-                  { emoji: '≡ƒÿÉ', label: 'Okay' },
-                  { emoji: '≡ƒÿñ', label: 'Bad' },
-                  { emoji: '≡ƒÆÇ', label: 'Disaster' },
+                  { emoji: '😍', label: 'Loved it' },
+                  { emoji: '😊', label: 'Good' },
+                  { emoji: '😐', label: 'Okay' },
+                  { emoji: '😠', label: 'Bad' },
+                  { emoji: '😭', label: 'Disaster' },
                 ].map((f, i) => (
                   <button 
                     key={i} 
@@ -1149,7 +1149,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               </div>
 
               <textarea 
-                placeholder="Drop tea Γÿò"
+                placeholder="Drop tea ☕"
                 className="w-full bg-pink-soft/50 rounded-2xl p-4 text-sm mb-6 focus:outline-none border-2 border-transparent focus:border-pink-primary/20"
                 rows={3}
                 value={feedbackComment}
@@ -1295,8 +1295,8 @@ export default function App() {
     if (!user) return;
     try {
       const request = type === 'Ride' 
-        ? `Heading to ${details.dest}. Anyone wants to share a ride? ≡ƒÜò`
-        : `Ordering from ${details.place}. Anyone wants to pool? ≡ƒìö`;
+        ? `Heading to ${details.dest}. Anyone wants to share a ride? 🛵`
+        : `Ordering from ${details.place}. Anyone wants to pool? 🍜`;
         
       await dataService.postCommunityPost({
         userName: user.name,
