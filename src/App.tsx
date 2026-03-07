@@ -249,7 +249,6 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
   const baseTabs = [
     { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
     { id: 'services', label: 'Services', icon: LayoutGrid, emoji: '🛒' },
-    { id: 'transport', label: 'Transport', icon: Car, emoji: '🚗' },
     { id: 'community', label: 'Community', icon: Users, emoji: '👥' },
     { id: 'profile', label: 'Profile', icon: User, emoji: '👤' },
   ];
@@ -643,10 +642,14 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   );
 };
 
-const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialServices, onReview, onCategorySelect }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], essentialServices: EssentialService[], onReview: (v: Vendor) => void, onCategorySelect: (cat: Category) => void }) => {
+const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
   const filteredVendors = selectedCategory 
     ? vendors.filter(v => v.category === selectedCategory)
     : vendors;
+
+  const filteredDrivers = selectedCategory && ['Auto', 'Cab'].includes(selectedCategory)
+    ? drivers.filter(d => d.type === selectedCategory)
+    : [];
 
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
@@ -720,7 +723,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
       )}
 
       <div className="flex flex-col gap-6">
-        {filteredVendors.length === 0 && selectedCategory && (
+        {filteredVendors.length === 0 && filteredDrivers.length === 0 && selectedCategory && (
           <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">📭 No contacts found</p>
             <p className="text-slate-400 font-bold text-sm mb-6">No services in this category yet. Be the first to add one!</p>
@@ -790,6 +793,67 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
                 ⭐ Review
               </button>
               <button className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                ➕ Save
+              </button>
+            </div>
+          </motion.div>
+        ))}
+        {filteredDrivers.map((d) => (
+          <motion.div 
+            key={d.id} 
+            whileHover={{ scale: 1.02, y: -4 }}
+            className="bg-white/98 backdrop-blur-sm rounded-[32px] p-6 shadow-md border-2 border-teal-primary/20 relative overflow-hidden group hover:shadow-xl hover:border-teal-primary/40 transition-all"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-soft/40 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-300" />
+            <div className="flex items-start gap-5 mb-6 relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-teal-soft to-teal-primary/20 rounded-[24px] flex items-center justify-center text-4xl shadow-md border-2 border-teal-primary/30 flex-shrink-0">
+                🏎️
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start mb-2 gap-2">
+                  <div className="flex-1">
+                    <h3 className="font-black text-lg tracking-tight text-slate-900 break-words">{d.name}</h3>
+                    {d.vehicleNumber && <p className="text-xs text-slate-500 font-bold">Vehicle: {d.vehicleNumber}</p>}
+                  </div>
+                  {d.isVerified && <VerifiedBadge />}
+                </div>
+                <div className="flex items-center gap-2 flex-wrap mb-3">
+                  <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{d.type}</span>
+                  {d.rating && <span className="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">⭐ {d.rating}</span>}
+                </div>
+                <div className="bg-teal-50 px-4 py-2.5 rounded-xl mb-3">
+                  <p className="text-xs font-black text-teal-primary tracking-wide break-all">{d.phone}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 relative z-10 mb-3">
+              <a 
+                href={`tel:${d.phone}`}
+                className="flex-1 bg-gradient-to-r from-teal-primary to-teal-600 hover:shadow-lg text-white font-black py-3.5 rounded-[18px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
+              >
+                <Phone size={16} />
+                Call Now
+              </a>
+              <a 
+                href={`https://wa.me/${d.whatsapp?.replace(/[^0-9]/g, '') || d.phone?.replace(/[^0-9]/g, '') || ''}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-gradient-to-r from-green-primary to-green-600 hover:shadow-lg text-white font-black py-3.5 rounded-[18px] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs hover:brightness-110"
+              >
+                <MessageCircle size={16} />
+                Chat
+              </a>
+            </div>
+            
+            <div className="flex gap-2 relative z-10">
+              <button 
+                onClick={() => onReview(d)}
+                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all"
+              >
+                ⭐ Review
+              </button>
+              <button className="flex-1 py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
                 ➕ Save
               </button>
             </div>
@@ -1640,24 +1704,14 @@ export default function App() {
             onBack={() => setSelectedCategory(null)} 
             onRefer={() => setIsReferOpen(true)}
             vendors={filteredVendors}
+            drivers={filteredDrivers}
             essentialServices={appData?.essentialServices || []}
             onReview={(v) => {
               setReviewTarget(v);
               setIsReviewOpen(true);
             }}
             onCategorySelect={(cat) => setSelectedCategory(cat)}
-          />
-        );
-      case 'transport':
-        return (
-          <TransportPage 
-            onPostRide={() => setIsPostRideOpen(true)} 
-            drivers={filteredDrivers}
-            routeFares={appData?.routeFares || []}
-            onReview={(d) => {
-              setReviewTarget(d);
-              setIsReviewOpen(true);
-            }}
+            onPostRide={() => setIsPostRideOpen(true)}
           />
         );
       case 'community':
@@ -1698,7 +1752,6 @@ export default function App() {
     switch (activeTab) {
       case 'home': return 'PinkIt';
       case 'services': return selectedCategory ? `${selectedCategory}` : 'Services';
-      case 'transport': return 'Transport';
       case 'community': return 'Community';
       case 'admin': return 'Admin Panel';
       case 'profile': return 'Profile';
