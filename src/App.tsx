@@ -27,11 +27,22 @@ import {
   Info,
   ExternalLink,
   ShoppingBag,
-  Send
+  Send,
+  Trash2,
+  Edit,
+  Shield
 } from 'lucide-react';
 import { Category, Vendor, Driver, CommunityPost, Review, RouteFare, EssentialService, RohtakSpot, PriceTag } from './types';
 import { ROHTAK_SPOTS } from './constants';
 import dataService from './services/dataService';
+
+// Admin emails
+const ADMIN_EMAILS = [
+  'hemanginivyas3@gmail.com',
+  '2nikhil.sharma131019@gmail.com',
+  'ipm06bodap@iimrohtak.ac.in',
+  'ipm06sangeethav@iimrohtak.ac.in'
+];
 
 // --- Components ---
 
@@ -234,14 +245,17 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
   );
 };
 
-const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) => {
-  const tabs = [
+const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTab: string, setActiveTab: (tab: string) => void, onBackClick?: () => void, isAdmin?: boolean }) => {
+  const baseTabs = [
     { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
     { id: 'services', label: 'Services', icon: LayoutGrid, emoji: '🛒' },
     { id: 'transport', label: 'Transport', icon: Car, emoji: '🚗' },
     { id: 'community', label: 'Community', icon: Users, emoji: '👥' },
     { id: 'profile', label: 'Profile', icon: User, emoji: '👤' },
   ];
+
+  const adminTab = { id: 'admin', label: 'Admin', icon: Shield, emoji: '🛡️' };
+  const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-xl border-t border-pink-100 px-6 py-4 pb-8 flex justify-between items-center z-50 rounded-t-[40px] shadow-[0_-10px_30px_rgba(255,45,85,0.05)]">
@@ -250,7 +264,10 @@ const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTa
         return (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              if (tab.id !== 'services') onBackClick?.();
+            }}
             className={`flex flex-col items-center gap-1 transition-all active:scale-90 ${
               isActive ? 'text-pink-primary' : 'text-slate-400'
             }`}
@@ -272,7 +289,7 @@ const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTa
                 />
               )}
             </motion.div>
-            <span className={`text-[9px] font-black uppercase tracking-tighter ${isActive ? 'opacity-100' : 'opacity-0'}`}>{tab.label}</span>
+            <span className={`text-[8px] font-semibold uppercase tracking-tight ${isActive ? 'opacity-100' : 'opacity-0'}`}>{tab.label}</span>
           </button>
         );
       })}
@@ -293,10 +310,10 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
           />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-3xl font-black tracking-tighter text-pink-hot italic leading-none">
+          <h1 className="text-2xl font-bold tracking-tight text-pink-primary">
             {title === 'PinkIt' ? '🎓 PinkIt' : title}
           </h1>
-          <p className="text-[9px] font-bold text-pink-primary/60 uppercase tracking-widest">Campus Legends Only</p>
+          <p className="text-[9px] font-semibold text-pink-primary/60 uppercase tracking-wide">Campus Legends Only</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -309,7 +326,7 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
             <History size={20} />
           </button>
         )}
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-soft to-pink-primary/20 flex items-center justify-center text-pink-primary font-black border-2 border-pink-100 shadow-sm uppercase text-sm tracking-tighter">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-soft to-pink-primary/20 flex items-center justify-center text-pink-primary font-semibold border-2 border-pink-100 shadow-sm uppercase text-sm tracking-tight">
           {user?.name?.substring(0, 2)?.toUpperCase() || 'JD'}
         </div>
       </div>
@@ -320,7 +337,7 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
         <input 
           type="text" 
           placeholder="🔍 Search services, contacts..." 
-          className="w-full bg-white rounded-2xl py-4 pl-12 pr-4 text-sm font-bold shadow-md border-2 border-pink-primary/20 focus:outline-none focus:border-pink-primary/50 transition-all placeholder:text-slate-400"
+          className="w-full bg-white rounded-2xl py-4 pl-12 pr-4 text-sm shadow-md border-2 border-pink-primary/20 focus:outline-none focus:border-pink-primary/50 transition-all placeholder:text-slate-400"
           onChange={(e) => onSearch?.(e.target.value)}
         />
       </div>
@@ -361,16 +378,16 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative z-10 text-6xl font-black text-white mb-2 italic tracking-tighter drop-shadow-2xl\">
+        className="relative z-10 text-6xl font-bold text-white mb-2 drop-shadow-2xl">
         PinkIt
       </motion.h1>
       <motion.p 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="relative z-10 text-pink-soft mb-12 text-center font-bold drop-shadow-lg"
+        className="relative z-10 text-pink-soft mb-12 text-center font-semibold drop-shadow-lg"
       >
-        Campus coordination, <span className="text-pink-primary font-black">simplified.</span> 🎯
+        Campus coordination, <span className="text-pink-primary font-bold">simplified.</span> 🎯
       </motion.p>
       
       <motion.div 
@@ -380,21 +397,21 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         className="relative z-10 w-full max-w-sm flex flex-col gap-6 mb-10"
       >
         <div className="relative">
-          <label className="text-[10px] font-black text-pink-primary uppercase mb-2 block ml-4 tracking-widest">Your Name</label>
+          <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Your Name</label>
           <input 
             type="text" 
             placeholder="e.g. Rahul Sharma"
-            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm font-bold text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
+            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className="relative">
-          <label className="text-[10px] font-black text-pink-primary uppercase mb-2 block ml-4 tracking-widest">Campus Email</label>
+          <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Campus Email</label>
           <input 
             type="email" 
             placeholder="rahul@campus.edu"
-            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm font-bold text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
+            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -407,7 +424,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         transition={{ delay: 0.5 }}
         onClick={() => name && email && onLogin(name, email)}
         disabled={!name || !email}
-        className="relative z-10 w-full max-w-sm py-5 bg-pink-primary text-white font-black rounded-[24px] shadow-2xl shadow-pink-primary/40 disabled:opacity-50 transition-all active:scale-95 uppercase tracking-widest text-sm"
+        className="relative z-10 w-full max-w-sm py-5 bg-pink-primary text-white font-semibold rounded-[24px] shadow-2xl shadow-pink-primary/40 disabled:opacity-50 transition-all active:scale-95 uppercase tracking-wide text-sm hover:brightness-110"
       >
         Let's Go! 🚀
       </motion.button>
@@ -480,7 +497,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
       </div>
 
       {/* Category Grid */}
-      <h2 className="text-2xl font-black mb-6 italic text-pink-hot tracking-tighter">⚡ Quick Fixes</h2>
+      <h2 className="text-2xl font-bold mb-6 text-pink-primary">⚡ Quick Fixes</h2>
       <div className="grid grid-cols-4 gap-3 mb-10">
         {categories.map((cat) => (
           <motion.button 
@@ -505,18 +522,18 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
       {/* Rohtak Spots Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-black italic text-pink-hot">Popular Spots ✨</h2>
-          <span className="text-[10px] font-black bg-pink-primary text-white px-2 py-1 rounded-full uppercase">Top Picks</span>
+          <h2 className="text-xl font-bold text-pink-primary">Popular Spots ✨</h2>
+          <span className="text-[9px] font-semibold bg-pink-primary text-white px-2 py-1 rounded-full uppercase">Top Picks</span>
         </div>
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
           {ROHTAK_SPOTS.map((spot) => (
             <div key={spot.id} className="min-w-[260px] bg-white rounded-[32px] overflow-hidden shadow-sm border border-pink-100 p-6">
               <div className="flex justify-between items-start mb-3">
-                <h3 className="font-black text-lg leading-tight">{spot.name}</h3>
-                <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-2 py-1 rounded-lg uppercase">{spot.type}</span>
+                <h3 className="font-semibold text-lg leading-tight">{spot.name}</h3>
+                <span className="text-[9px] font-semibold bg-teal-soft text-teal-primary px-2 py-1 rounded-lg uppercase">{spot.type}</span>
               </div>
-              <p className="text-xs text-slate-500 mb-4 line-clamp-2 font-medium">{spot.description}</p>
-              <div className="flex items-center gap-2 text-[10px] font-black text-pink-primary bg-pink-soft w-fit px-3 py-1 rounded-full">
+              <p className="text-xs text-slate-500 mb-4 line-clamp-2">{spot.description}</p>
+              <div className="flex items-center gap-2 text-[9px] font-semibold text-pink-primary bg-pink-soft w-fit px-3 py-1 rounded-full">
                 <MapPin size={10} />
                 {spot.location}
               </div>
@@ -666,17 +683,17 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           {selectedCategory && (
-            <button onClick={onBack} className="p-3 bg-pink-soft text-pink-primary rounded-2xl active:scale-90 transition-all">
+            <button onClick={onBack} className="p-3 bg-pink-soft text-pink-primary rounded-2xl active:scale-90 transition-all hover:bg-pink-primary/10" title="Go back">
               <ChevronRight size={20} className="rotate-180" />
             </button>
           )}
-          <h2 className="text-2xl font-black italic tracking-tighter text-pink-hot">
-            {selectedCategory ? `${getEmoji(selectedCategory)} ${selectedCategory}` : '✨ All Services'}
+          <h2 className="text-2xl font-bold text-pink-primary">
+            {selectedCategory ? `${selectedCategory}` : '✨ All Services'}
           </h2>
         </div>
         <button 
           onClick={onRefer}
-          className="p-3 bg-pink-primary text-white rounded-2xl flex items-center gap-2 text-xs font-black uppercase tracking-widest shadow-lg shadow-pink-primary/20 active:scale-95 transition-all"
+          className="p-3 bg-pink-primary text-white rounded-2xl flex items-center gap-2 text-xs font-semibold uppercase tracking-wide shadow-lg shadow-pink-primary/20 active:scale-95 transition-all hover:brightness-110"
         >
           <PlusCircle size={18} />
           ➕ Suggest
@@ -799,11 +816,11 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
     >
       <div className="bg-pink-primary rounded-[40px] p-8 text-white mb-8 vibrant-shadow relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-        <h2 className="text-3xl font-black mb-2 italic">🛵 Campus Rides</h2>
-        <p className="text-pink-soft text-sm font-bold opacity-80">Direct contact with trusted drivers.</p>
+        <h2 className="text-3xl font-bold mb-2">🛵 Campus Rides</h2>
+        <p className="text-pink-soft text-sm opacity-80">Direct contact with trusted drivers.</p>
         <button 
           onClick={onPostRide}
-          className="mt-4 px-6 py-3 bg-white text-pink-primary font-black rounded-2xl text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+          className="mt-4 px-6 py-3 bg-white text-pink-primary font-semibold rounded-2xl text-xs uppercase tracking-wide shadow-lg active:scale-95 transition-all hover:brightness-95"
         >
           + Post Ride Request
         </button>
@@ -815,7 +832,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
           <button
             key={t}
             onClick={() => setFilter(t as any)}
-            className={`px-6 py-2 rounded-xl font-bold text-xs transition-all ${
+            className={`px-6 py-2 rounded-xl font-semibold text-xs transition-all ${
               filter === t ? 'bg-pink-primary text-white shadow-md' : 'bg-white text-slate-400 border border-slate-100'
             }`}
           >
@@ -824,13 +841,13 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
         ))}
       </div>
 
-      <h3 className="font-bold mb-4 text-slate-700 uppercase tracking-wider text-sm">{filter} Drivers ({filteredDrivers.length})</h3>
+      <h3 className="font-semibold mb-4 text-slate-700 uppercase tracking-wide text-sm">{filter} Drivers ({filteredDrivers.length})</h3>
       <div className="flex flex-col gap-4">
         {filteredDrivers.length === 0 ? (
           <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
-            <p className="text-slate-600 font-black text-lg mb-4">🚗 No drivers available</p>
-            <p className="text-slate-400 font-bold text-sm mb-6">No {filter.toLowerCase()} drivers available right now.</p>
-            <button onClick={onPostRide} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Post a ride request</button>
+            <p className="text-slate-600 font-bold text-lg mb-4">🚗 No drivers available</p>
+            <p className="text-slate-400 text-sm mb-6">No {filter.toLowerCase()} drivers available right now.</p>
+            <button onClick={onPostRide} className="text-pink-primary font-semibold uppercase text-xs tracking-wide underline hover:text-pink-hot">+ Post a ride request</button>
           </div>
         ) : (
           filteredDrivers.map((d) => (
@@ -846,11 +863,11 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-black text-xl">{d.name}</h4>
+                    <h4 className="font-bold text-lg">{d.name}</h4>
                     {d.isVerified && <VerifiedBadge />}
                   </div>
-                  {d.ownerName && <p className="text-xs text-slate-500 font-bold mb-1">Operator: {d.ownerName}</p>}
-                  <span className="text-[10px] font-black bg-slate-100 text-slate-400 px-2 py-1 rounded-lg uppercase tracking-wider">{d.type} Driver</span>
+                  {d.ownerName && <p className="text-xs text-slate-500 mb-1">Operator: {d.ownerName}</p>}
+                  <span className="text-[9px] font-semibold bg-slate-100 text-slate-400 px-2 py-1 rounded-lg uppercase tracking-wide">{d.type} Driver</span>
                 </div>
               </div>
             </div>
@@ -858,7 +875,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex gap-3">
               <a 
                 href={`tel:${d.phone}`}
-                className="flex-1 bg-pink-primary text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-pink-primary/20"
+                className="flex-1 bg-pink-primary text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-pink-primary/20 hover:brightness-110"
               >
                 <Phone size={18} />
                 Call Now
@@ -867,7 +884,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
                 href={`https://wa.me/${d.whatsapp.replace('+', '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 bg-teal-primary text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-teal-primary/20"
+                className="flex-1 bg-teal-primary text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-teal-primary/20 hover:brightness-110"
               >
                 <MessageCircle size={18} />
                 WhatsApp
@@ -877,13 +894,13 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex gap-2 mt-4">
               <button 
                 onClick={() => onReview(d)}
-                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-xl uppercase tracking-wider active:scale-95 transition-all"
+                className="flex-1 py-3 text-slate-600 font-semibold text-xs bg-slate-100 hover:bg-slate-200 rounded-xl uppercase tracking-wide active:scale-95 transition-all"
               >
                 ⭐ Review
               </button>
               <button 
                 onClick={onPostRide}
-                className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-xl uppercase tracking-wider active:scale-95 transition-all"
+                className="flex-1 py-3 text-pink-primary font-semibold text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-xl uppercase tracking-wide active:scale-95 transition-all"
               >
                 📍 Join Ride
               </button>
@@ -897,156 +914,146 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
 };
 
 const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }: { onPostRide: () => void, onPostReview: () => void, onRefer: () => void, posts: CommunityPost[], onInterest: (id: string) => void, user: { name: string } }) => {
-  const [message, setMessage] = useState('');
+  const [tab, setTab] = useState<'posts' | 'feedback'>('posts');
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col h-[calc(100vh-180px)]"
+      className="flex flex-col"
     >
       {/* Action Bar */}
-      <div className="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar border-b border-pink-100 bg-white/50 backdrop-blur-sm sticky top-0 z-20">
+      <div className="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar border-b border-pink-100 bg-white/50 backdrop-blur-sm sticky top-0 z-20 mb-4">
         <button 
           onClick={onPostRide}
-          className="flex-shrink-0 px-6 py-3 bg-pink-primary text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-pink-primary/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
+          className="flex-shrink-0 px-6 py-3 bg-pink-primary text-white font-semibold rounded-2xl flex items-center gap-2 shadow-lg shadow-pink-primary/20 text-[9px] uppercase tracking-wide active:scale-95 transition-all hover:brightness-110"
         >
           <Car size={16} />
           🛵 Pool Ride
         </button>
         <button 
-          onClick={() => setMessage('I am ordering from [Place]. Anyone wants to pool? 🍕')}
-          className="flex-shrink-0 px-6 py-3 bg-teal-primary text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-teal-primary/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
-        >
-          <ShoppingBag size={16} />
-          🍕 Pool Order
-        </button>
-        <button 
           onClick={onPostReview}
-          className="flex-shrink-0 px-6 py-3 bg-slate-900 text-white font-black rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-900/20 text-[10px] uppercase tracking-widest active:scale-95 transition-all"
+          className="flex-shrink-0 px-6 py-3 bg-slate-900 text-white font-semibold rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-900/20 text-[9px] uppercase tracking-wide active:scale-95 transition-all hover:brightness-110"
         >
           <Star size={16} />
-          ⭐ Review
+          ⭐ Feedback
         </button>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-6 no-scrollbar">
-        {posts.map((post, idx) => {
-          const isMe = post.userName === user.name;
-          return (
-            <motion.div 
-              key={post.id} 
-              initial={{ opacity: 0, x: isMe ? 20 : -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
-            >
-              <div className={`flex items-center gap-2 mb-1 px-2 ${isMe ? 'flex-row-reverse' : ''}`}>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{post.userName}</span>
-                <span className="text-[9px] font-bold text-slate-300 uppercase">{post.time}</span>
-              </div>
-              
-              <div className={`max-w-[85%] p-5 rounded-[32px] shadow-sm border ${
-                isMe 
-                  ? 'bg-pink-primary text-white border-pink-primary rounded-tr-none' 
-                  : 'bg-white text-slate-800 border-pink-100 rounded-tl-none'
-              }`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                    isMe ? 'bg-white/20 text-white' : 'bg-pink-soft text-pink-primary'
+      {/* Tab Selector */}
+      <div className="px-6 mb-4 flex gap-2">
+        <button
+          onClick={() => setTab('posts')}
+          className={`px-6 py-2 rounded-xl font-semibold text-xs transition-all ${
+            tab === 'posts' ? 'bg-pink-primary text-white shadow-md' : 'bg-white text-slate-400 border border-slate-100'
+          }`}
+        >
+          📝 Community Posts
+        </button>
+        <button
+          onClick={() => setTab('feedback')}
+          className={`px-6 py-2 rounded-xl font-semibold text-xs transition-all ${
+            tab === 'feedback' ? 'bg-pink-primary text-white shadow-md' : 'bg-white text-slate-400 border border-slate-100'
+          }`}
+        >
+          💬 Feedback
+        </button>
+      </div>
+
+      {/* Posts Feed */}
+      {tab === 'posts' && (
+        <div className="px-6 pb-24 space-y-4">
+          {posts && posts.length > 0 ? (
+            posts.map((post) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-[32px] p-6 border border-pink-100 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 className="font-bold text-lg">{post.userName}</h4>
+                    <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">{post.time}</p>
+                  </div>
+                  <span className={`px-3 py-1.5 rounded-full text-[8px] font-semibold uppercase tracking-wide ${
+                    post.type === 'Ride' ? 'bg-pink-soft text-pink-primary' : 'bg-teal-soft text-teal-primary'
                   }`}>
-                    {post.type}
+                    {post.type === 'Ride' ? '🛵' : '🍕'} {post.type}
                   </span>
                 </div>
-                
-                <p className="text-sm font-medium leading-relaxed">
-                  {post.request}
-                </p>
+
+                <p className="text-sm mb-4 leading-relaxed">{post.request}</p>
 
                 {post.type === 'Ride' && post.destination && (
-                  <div className={`mt-4 p-3 rounded-2xl flex flex-col gap-1 border ${
-                    isMe ? 'bg-white/10 border-white/20' : 'bg-blue-soft/50 border-blue-100'
-                  }`}>
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest">
+                  <div className="bg-blue-soft/50 border border-blue-100 p-3 rounded-2xl mb-4">
+                    <div className="flex items-center gap-2 text-[9px] font-semibold text-blue-primary uppercase tracking-wide mb-1">
                       <MapPin size={12} />
-                      <span>{post.destination}</span>
+                      {post.destination}
                     </div>
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest">
+                    <div className="flex items-center gap-2 text-[9px] font-semibold text-blue-primary uppercase tracking-wide">
                       <Clock size={12} />
-                      <span>{post.departureTime}</span>
+                      {post.departureTime}
                     </div>
                   </div>
                 )}
 
-                <div className={`mt-4 flex gap-2 ${isMe ? 'justify-end' : ''}`}>
-                  {!isMe && (
-                    <a 
-                      href={`tel:${post.contact}`}
-                      className="p-2 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-colors"
-                    >
-                      <Phone size={14} />
-                    </a>
-                  )}
-                  <button 
+                <div className="flex gap-3">
+                  <a
+                    href={`https://wa.me/${post.contact?.replace(/[^0-9]/g, '') || ''}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-green-500 hover:brightness-110 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
+                  >
+                    <MessageCircle size={16} />
+                    DM on WhatsApp
+                  </a>
+                  <button
                     onClick={() => onInterest(post.id)}
-                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-90 ${
+                    className={`flex-1 font-semibold py-3 rounded-xl text-[10px] uppercase tracking-wide transition-all active:scale-90 ${
                       post.interestedUsers?.includes('You')
                         ? 'bg-green-500 text-white'
-                        : isMe ? 'bg-white/20 text-white' : 'bg-pink-soft text-pink-primary'
+                        : 'bg-pink-soft text-pink-primary hover:brightness-110'
                     }`}
                   >
-                    {post.interestedUsers?.includes('You') ? '✅ Joined!' : "🙋 I'm In!"}
+                    {post.interestedUsers?.includes('You') ? '✅ Interested!' : '👋 Interested'}
                   </button>
                 </div>
-              </div>
-              
-              {post.interestedUsers && post.interestedUsers.length > 0 && (
-                <div className="mt-2 px-2 flex -space-x-2">
-                  {post.interestedUsers.map((u, i) => (
-                    <div key={i} className="w-6 h-6 rounded-full bg-teal-primary border-2 border-white flex items-center justify-center text-[8px] font-black text-white uppercase">
-                      {u.charAt(0)}
-                    </div>
-                  ))}
-                  <span className="ml-4 text-[9px] font-black text-teal-primary uppercase self-center">
-                    +{post.interestedUsers.length} interested
-                  </span>
-                </div>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
 
-      {/* Message Input */}
-      <div className="px-6 py-4 bg-white/80 backdrop-blur-xl border-t border-pink-100 flex gap-3 items-center">
-        <div className="flex-1 relative">
-          <input 
-            type="text" 
-            placeholder="Share your thoughts & feedback..." 
-            className="w-full bg-pink-soft/50 rounded-2xl py-4 px-6 text-sm font-bold focus:outline-none border-2 border-transparent focus:border-pink-primary/20 transition-all"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' && message) {
-                // Handle send
-                setMessage('');
-              }
-            }}
-          />
+                {post.interestedUsers && post.interestedUsers.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-pink-100">
+                    <p className="text-[8px] font-semibold text-slate-500 uppercase tracking-wide">
+                      {post.interestedUsers.filter(u => u !== 'You').length} people interested
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            ))
+          ) : (
+            <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+              <p className="text-slate-600 font-bold text-lg mb-4">📭 No posts yet</p>
+              <p className="text-slate-400 text-sm mb-6">Be the first to pool a ride or share something!</p>
+            </div>
+          )}
         </div>
-        <button 
-          onClick={() => {
-            if (message) {
-              // Handle send
-              setMessage('');
-            }
-          }}
-          className="w-12 h-12 bg-pink-primary text-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/20 active:scale-90 transition-all"
-        >
-          <Send size={20} />
-        </button>
-      </div>
+      )}
+
+      {/* Feedback Tab */}
+      {tab === 'feedback' && (
+        <div className="px-6 pb-24">
+          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+            <p className="text-slate-600 font-bold text-lg mb-4">💬 Community Feedback</p>
+            <p className="text-slate-400 text-sm mb-6">Share your experiences and feedback with PinkIt to help us improve!</p>
+            <button
+              onClick={onPostReview}
+              className="inline-block px-6 py-3 bg-pink-primary text-white font-semibold rounded-2xl hover:brightness-110"
+            >
+              ⭐ Write Feedback
+            </button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
@@ -1074,7 +1081,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
       <div className="flex flex-col items-center gap-6 mb-10">
         <div className="relative">
           <div className="w-32 h-32 rounded-[40px] bg-pink-primary p-1 shadow-2xl shadow-pink-primary/30 rotate-3">
-            <div className="w-full h-full rounded-[36px] bg-pink-soft flex items-center justify-center text-pink-primary text-4xl font-black border-4 border-white uppercase -rotate-3">
+            <div className="w-full h-full rounded-[36px] bg-pink-soft flex items-center justify-center text-pink-primary text-4xl font-bold border-4 border-white uppercase -rotate-3">
               {user.name.substring(0, 2)}
             </div>
           </div>
@@ -1083,8 +1090,8 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-3xl font-black italic tracking-tighter">{user.name}</h2>
-          <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest mt-1">{user.email}</p>
+          <h2 className="text-3xl font-bold">{user.name}</h2>
+          <p className="text-slate-500 font-semibold uppercase text-[9px] tracking-wide mt-1">{user.email}</p>
         </div>
       </div>
 
@@ -1100,10 +1107,10 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
                 <div className={`w-10 h-10 rounded-2xl bg-pink-soft flex items-center justify-center ${item.color}`}>
                   <Icon size={20} />
                 </div>
-                <span className="font-black text-slate-700 uppercase text-xs tracking-wider">{item.label}</span>
+                <span className="font-semibold text-slate-700 uppercase text-xs tracking-wide">{item.label}</span>
               </div>
               {item.badge ? (
-                <span className="text-[9px] font-black bg-pink-primary text-white px-3 py-1 rounded-full uppercase tracking-tighter">
+                <span className="text-[8px] font-semibold bg-pink-primary text-white px-3 py-1 rounded-full uppercase tracking-tight">
                   {item.badge}
                 </span>
               ) : (
@@ -1117,26 +1124,26 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
       <div className="flex flex-col gap-4">
         <button 
           onClick={() => setShowFeedback(true)}
-          className="w-full py-5 bg-white text-pink-primary font-black rounded-[24px] shadow-sm border border-pink-100 uppercase tracking-widest text-xs active:scale-95 transition-all"
+          className="w-full py-5 bg-white text-pink-primary font-semibold rounded-[24px] shadow-sm border border-pink-100 uppercase tracking-wide text-xs active:scale-95 transition-all hover:bg-pink-soft/20"
         >
           😊 Rate Experience
         </button>
         <button 
           onClick={() => setShowComplaint(true)}
-          className="w-full py-5 bg-slate-900 text-white font-black rounded-[24px] shadow-2xl shadow-slate-900/20 uppercase tracking-widest text-xs active:scale-95 transition-all"
+          className="w-full py-5 bg-slate-900 text-white font-semibold rounded-[24px] shadow-2xl shadow-slate-900/20 uppercase tracking-wide text-xs active:scale-95 transition-all hover:brightness-110"
         >
           ⚠️ Raise a Complaint
         </button>
         <button 
           onClick={onLogout}
-          className="w-full py-5 bg-slate-100 text-slate-400 font-black rounded-[24px] uppercase tracking-widest text-xs active:scale-95 transition-all"
+          className="w-full py-5 bg-slate-100 text-slate-400 font-semibold rounded-[24px] uppercase tracking-wide text-xs active:scale-95 transition-all hover:bg-slate-200"
         >
           👋 Logout
         </button>
       </div>
 
       <div className="mt-12 p-8 bg-pink-soft/50 rounded-[40px] border border-pink-100/50">
-        <p className="text-[10px] text-pink-primary/40 text-center leading-relaxed uppercase font-black tracking-[0.2em]">
+        <p className="text-[9px] text-pink-primary/40 text-center leading-relaxed uppercase font-semibold tracking-wide">
           PinkIt v2.0.0 • Built for Legends 🎓
         </p>
       </div>
@@ -1156,8 +1163,8 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               exit={{ y: 100 }}
               className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
             >
-              <h3 className="text-2xl font-black mb-2 text-center">How was your PinkIt experience?</h3>
-              <p className="text-slate-500 text-center mb-8">Your feedback helps the community.</p>
+              <h3 className="text-2xl font-bold mb-2 text-center">How was your PinkIt experience?</h3>
+              <p className="text-slate-500 text-center mb-8 text-sm">Your feedback helps the community.</p>
               
               <div className="flex justify-between mb-8">
                 {[
@@ -1173,7 +1180,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
                     onClick={() => setFeedbackRating(f.label)}
                   >
                     <span className="text-4xl">{f.emoji}</span>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">{f.label}</span>
+                    <span className="text-[8px] font-semibold text-slate-400 uppercase">{f.label}</span>
                   </button>
                 ))}
               </div>
@@ -1189,7 +1196,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               <div className="flex gap-3">
                 <button 
                   onClick={() => setShowFeedback(false)}
-                  className="flex-1 py-4 bg-slate-100 text-slate-500 font-bold rounded-2xl"
+                  className="flex-1 py-4 bg-slate-100 text-slate-500 font-semibold rounded-2xl"
                 >
                   Skip
                 </button>
@@ -1198,7 +1205,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
                     onFeedback(feedbackRating, feedbackComment);
                     setShowFeedback(false);
                   }}
-                  className="flex-1 py-4 bg-pink-primary text-white font-bold rounded-2xl"
+                  className="flex-1 py-4 bg-pink-primary text-white font-semibold rounded-2xl hover:brightness-110"
                 >
                   Submit
                 </button>
@@ -1220,7 +1227,7 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               exit={{ y: 100 }}
               className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
             >
-              <h3 className="text-2xl font-black mb-6">Raise a Complaint</h3>
+              <h3 className="text-2xl font-bold mb-6">Raise a Complaint</h3>
               
               <div className="flex flex-col gap-2 mb-8">
                 {['Vendor issue', 'Driver issue', 'Delay', 'Price mismatch', 'Safety issue'].map((issue) => (
@@ -1230,20 +1237,20 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
                       onComplaint(issue);
                       setShowComplaint(false);
                     }}
-                    className="w-full text-left p-4 bg-pink-soft/50 rounded-2xl font-bold text-slate-700 hover:bg-pink-soft hover:text-pink-primary transition-colors"
+                    className="w-full text-left p-4 bg-pink-soft/50 rounded-2xl font-semibold text-slate-700 hover:bg-pink-soft hover:text-pink-primary transition-colors"
                   >
                     {issue}
                   </button>
                 ))}
               </div>
 
-              <p className="text-[10px] text-slate-400 mb-6 leading-relaxed italic">
+              <p className="text-[9px] text-slate-400 mb-6 leading-relaxed">
                 Disclaimer: Pinkit is a community-driven coordination platform. We do not charge commission. Payments are made directly to vendors.
               </p>
 
               <button 
                 onClick={() => setShowComplaint(false)}
-                className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl"
+                className="w-full py-4 bg-slate-900 text-white font-semibold rounded-2xl hover:brightness-110"
               >
                 Close
               </button>
@@ -1251,6 +1258,135 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.div>
+  );
+};
+
+const AdminPanel = ({ vendors, drivers, onAddVendor, onEditVendor, onDeleteVendor, onAddDriver, onEditDriver, onDeleteDriver }: { 
+  vendors: Vendor[], 
+  drivers: Driver[], 
+  onAddVendor: (v: Vendor) => void,
+  onEditVendor: (v: Vendor) => void,
+  onDeleteVendor: (id: string) => void,
+  onAddDriver: (d: Driver) => void,
+  onEditDriver: (d: Driver) => void,
+  onDeleteDriver: (id: string) => void
+}) => {
+  const [tab, setTab] = useState<'vendors' | 'drivers'>('vendors');
+  const [showAddVendor, setShowAddVendor] = useState(false);
+  const [showAddDriver, setShowAddDriver] = useState(false);
+  const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
+  const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="px-6 pb-24"
+    >
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[40px] p-8 text-white mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+        <h2 className="text-3xl font-bold mb-2">🛡️ Admin Panel</h2>
+        <p className="text-slate-300 text-sm">Manage vendors and drivers</p>
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setTab('vendors')}
+          className={`px-6 py-2 rounded-xl font-semibold text-xs transition-all ${
+            tab === 'vendors' ? 'bg-pink-primary text-white shadow-md' : 'bg-white text-slate-400 border border-slate-100'
+          }`}
+        >
+          📦 Vendors ({vendors.length})
+        </button>
+        <button
+          onClick={() => setTab('drivers')}
+          className={`px-6 py-2 rounded-xl font-semibold text-xs transition-all ${
+            tab === 'drivers' ? 'bg-pink-primary text-white shadow-md' : 'bg-white text-slate-400 border border-slate-100'
+          }`}
+        >
+          🚗 Drivers ({drivers.length})
+        </button>
+      </div>
+
+      {tab === 'vendors' && (
+        <div className="space-y-4">
+          <button
+            onClick={() => setShowAddVendor(true)}
+            className="w-full py-3 bg-pink-primary text-white font-semibold rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:brightness-110"
+          >
+            <PlusCircle size={18} />
+            Add New Vendor
+          </button>
+          <div className="space-y-3">
+            {vendors.map(v => (
+              <div key={v.id} className="bg-white rounded-[24px] p-4 border border-pink-100">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h4 className="font-bold text-lg">{v.name}</h4>
+                    <p className="text-xs text-slate-500">{v.category}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingVendor(v)}
+                      className="p-2 bg-blue-soft text-blue-primary rounded-lg hover:brightness-110"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteVendor(v.id)}
+                      className="p-2 bg-red-100 text-red-600 rounded-lg hover:brightness-110"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600">{v.phone}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'drivers' && (
+        <div className="space-y-4">
+          <button
+            onClick={() => setShowAddDriver(true)}
+            className="w-full py-3 bg-teal-primary text-white font-semibold rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:brightness-110"
+          >
+            <PlusCircle size={18} />
+            Add New Driver
+          </button>
+          <div className="space-y-3">
+            {drivers.map(d => (
+              <div key={d.id} className="bg-white rounded-[24px] p-4 border border-pink-100">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h4 className="font-bold text-lg">{d.name}</h4>
+                    <p className="text-xs text-slate-500">{d.type} Driver</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingDriver(d)}
+                      className="p-2 bg-blue-soft text-blue-primary rounded-lg hover:brightness-110"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteDriver(d.id)}
+                      className="p-2 bg-red-100 text-red-600 rounded-lg hover:brightness-110"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600">{d.phone}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
@@ -1267,6 +1403,7 @@ type AppData = {
 
 export default function App() {
   const [user, setUser] = useState<{ name: string, email: string } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [isPostRideOpen, setIsPostRideOpen] = useState(false);
@@ -1284,18 +1421,25 @@ export default function App() {
     const savedUser = localStorage.getItem('pinkit_user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+      const savedAdmin = localStorage.getItem('pinkit_admin') === 'true';
+      setIsAdmin(savedAdmin);
     }
   }, []);
 
   const handleLogin = (name: string, email: string) => {
     const newUser = { name, email };
+    const adminStatus = ADMIN_EMAILS.includes(email);
     setUser(newUser);
+    setIsAdmin(adminStatus);
     localStorage.setItem('pinkit_user', JSON.stringify(newUser));
+    localStorage.setItem('pinkit_admin', adminStatus.toString());
   };
 
   const handleLogout = () => {
     setUser(null);
+    setIsAdmin(false);
     localStorage.removeItem('pinkit_user');
+    localStorage.removeItem('pinkit_admin');
   };
 
   const fetchAllData = async (force = false) => {
@@ -1423,6 +1567,30 @@ export default function App() {
     setAppData({ ...appData, communityPosts: newPosts });
   };
 
+  const handleDeleteVendor = (vendorId: string) => {
+    if (window.confirm('Are you sure you want to delete this vendor?')) {
+      if (appData) {
+        setAppData({
+          ...appData,
+          vendors: appData.vendors.filter(v => v.id !== vendorId)
+        });
+      }
+      alert('Vendor deleted!');
+    }
+  };
+
+  const handleDeleteDriver = (driverId: string) => {
+    if (window.confirm('Are you sure you want to delete this driver?')) {
+      if (appData) {
+        setAppData({
+          ...appData,
+          drivers: appData.drivers.filter(d => d.id !== driverId)
+        });
+      }
+      alert('Driver deleted!');
+    }
+  };
+
   const filteredVendors = (appData?.vendors || []).filter(v => {
     const matchesSearch = searchQuery === '' || 
       v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1506,6 +1674,19 @@ export default function App() {
             user={user}
           />
         );
+      case 'admin':
+        return (
+          <AdminPanel
+            vendors={appData?.vendors || []}
+            drivers={appData?.drivers || []}
+            onAddVendor={() => {}}
+            onEditVendor={() => {}}
+            onDeleteVendor={handleDeleteVendor}
+            onAddDriver={() => {}}
+            onEditDriver={() => {}}
+            onDeleteDriver={handleDeleteDriver}
+          />
+        );
       case 'profile':
         return <ProfilePage user={user} onLogout={handleLogout} onComplaint={handleComplaint} onFeedback={handleAppFeedback} />;
       default:
@@ -1519,6 +1700,7 @@ export default function App() {
       case 'services': return selectedCategory ? `${selectedCategory}` : 'Services';
       case 'transport': return 'Transport';
       case 'community': return 'Community';
+      case 'admin': return 'Admin Panel';
       case 'profile': return 'Profile';
       default: return 'PinkIt';
     }
@@ -1564,11 +1746,16 @@ export default function App() {
           {renderPage(isLoading, appData, error, searchQuery)}
         </AnimatePresence>
       </main>
-      <BottomNav activeTab={activeTab} setActiveTab={(tab) => {
-        setActiveTab(tab);
-        if (tab !== 'services') setSelectedCategory(null);
-        setSearchQuery('');
-      }} />
+      <BottomNav 
+        activeTab={activeTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          if (tab !== 'services') setSelectedCategory(null);
+          setSearchQuery('');
+        }}
+        onBackClick={() => setSelectedCategory(null)}
+        isAdmin={isAdmin}
+      />
 
       <PostCommunityModal 
         isOpen={isPostRideOpen} 

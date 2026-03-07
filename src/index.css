@@ -26,9 +26,9 @@
     font-family: var(--font-sans);
   }
   
-  h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    @apply tracking-tight;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    @apply font-bold;
   }
 }
 
