@@ -1,68 +1,72 @@
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import db from "../firebase/firestore";
 
 const dataService = {
   async fetchData(force = false) {
-    let vendors = [];
-    let drivers = [];
+    let vendors: any[] = [];
+    let drivers: any[] = [];
 
-    // FETCH FROM LOCAL STATIC CONTACTS FILE
+    // Static fallback while migrating all contacts to Firebase.
     try {
-      console.log("Loading contacts from static file...");
-      // Use Vite base URL so this works in both root and subpath deployments.
       const contactsUrl = `${import.meta.env.BASE_URL}contacts.json`;
       const response = await fetch(contactsUrl);
       const contactData = await response.json();
-
-      if (contactData && contactData.vendors && contactData.drivers) {
-        console.log(`Loaded ${contactData.vendors.length} vendors and ${contactData.drivers.length} drivers from contacts.json`);
+      if (contactData?.vendors && contactData?.drivers) {
         vendors = contactData.vendors || [];
         drivers = contactData.drivers || [];
-      } else {
-        console.warn("Could not load contacts from file");
       }
     } catch (error) {
       console.error("Error loading contacts.json:", error);
     }
 
-    // Fetch Firebase data (community posts, complaints, etc.)
     try {
       const vendorsSnapshot = await getDocs(collection(db, "vendors"));
       const driversSnapshot = await getDocs(collection(db, "drivers"));
       const communityPostsSnapshot = await getDocs(collection(db, "communityPosts"));
       const routeFaresSnapshot = await getDocs(collection(db, "routeFares"));
       const essentialServicesSnapshot = await getDocs(collection(db, "essentialServices"));
+      const reviewsSnapshot = await getDocs(collection(db, "reviews"));
 
-      // Merge with Firebase vendors (student-added contacts)
-      const fbVendors = vendorsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const fbVendors = vendorsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const fbDrivers = driversSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-      const fbDrivers = driversSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const activeVendors = fbVendors.length > 0 ? fbVendors : vendors;
+      const activeDrivers = fbDrivers.length > 0 ? fbDrivers : drivers;
+
+      const reviewStats = new Map<string, { total: number; count: number }>();
+      reviewsSnapshot.docs.forEach((doc) => {
+        const review = doc.data() as any;
+        const targetId = review.targetId;
+        const rating = Number(review.rating);
+        if (!targetId || Number.isNaN(rating)) return;
+        const current = reviewStats.get(targetId) || { total: 0, count: 0 };
+        reviewStats.set(targetId, {
+          total: current.total + rating,
+          count: current.count + 1,
+        });
+      });
+
+      const withRatings = <T extends { id: string }>(items: T[]) => {
+        return items.map((item) => {
+          const stat = reviewStats.get(item.id);
+          if (!stat) return item;
+          return {
+            ...item,
+            rating: Number((stat.total / stat.count).toFixed(1)),
+            reviewCount: stat.count,
+          };
+        });
+      };
 
       return {
-        vendors: [...vendors, ...fbVendors],
-        drivers: [...drivers, ...fbDrivers],
-        communityPosts: communityPostsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })),
-        routeFares: routeFaresSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })),
-        essentialServices: essentialServicesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })),
+        vendors: withRatings(activeVendors),
+        drivers: withRatings(activeDrivers),
+        communityPosts: communityPostsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        routeFares: routeFaresSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        essentialServices: essentialServicesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
       };
     } catch (error) {
       console.error("Error fetching Firebase data:", error);
-      // Keep local contacts visible even if Firebase fails.
       return {
         vendors,
         drivers,
@@ -82,6 +86,19 @@ const dataService = {
       return true;
     } catch (err) {
       console.error("Error posting community post:", err);
+      throw err;
+    }
+  },
+
+  async postReview(data: any) {
+    try {
+      await addDoc(collection(db, "reviews"), {
+        ...data,
+        createdAt: new Date().toISOString(),
+      });
+      return true;
+    } catch (err) {
+      console.error("Error posting review:", err);
       throw err;
     }
   },
@@ -112,7 +129,6 @@ const dataService = {
     }
   },
 
-  // Add student-referred contact
   async addStudentContact(data: any) {
     try {
       const newContact = await addDoc(collection(db, "vendors"), {
@@ -124,6 +140,7 @@ const dataService = {
         isVerified: false,
         image: "",
         addedBy: data.userName,
+        addedByUserId: data.userId,
         createdAt: new Date().toISOString(),
       });
       return newContact.id;

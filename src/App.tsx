@@ -35,6 +35,7 @@ import {
 import { Category, Vendor, Driver, CommunityPost, Review, RouteFare, EssentialService, RohtakSpot, PriceTag } from './types';
 import { ROHTAK_SPOTS } from './constants';
 import dataService from './services/dataService';
+import { subscribeToAuth, signInUser, signUpUser, logoutUser } from './firebase/auth';
 
 // Admin emails
 const ADMIN_EMAILS = [
@@ -406,89 +407,133 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
   </header>
 );
 
-const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => void }) => {
+const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string, password: string, isSignup: boolean) => Promise<void> }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignup, setIsSignup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const canSubmit = email.trim() && password.trim() && (!isSignup || name.trim());
+
+  const handleSubmit = async () => {
+    if (!canSubmit || isSubmitting) return;
+    setIsSubmitting(true);
+    setAuthError(null);
+    try {
+      await onLogin(name.trim(), email.trim(), password, isSignup);
+    } catch (err: any) {
+      const message = err?.message || 'Authentication failed. Please try again.';
+      setAuthError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center p-8 overflow-hidden">
       <div className="absolute inset-0 opacity-40">
-        <img 
-          src="https://i.postimg.cc/d1Yj855X/Whats-App-Image-2026-03-05-at-7-56-38-PM.jpg" 
-          alt="Background" 
+        <img
+          src="https://i.postimg.cc/d1Yj855X/Whats-App-Image-2026-03-05-at-7-56-38-PM.jpg"
+          alt="Background"
           className="w-full h-full object-cover blur-sm scale-110"
           referrerPolicy="no-referrer"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-pink-hot/20 to-slate-900" />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="relative z-10 w-32 h-32 bg-white rounded-[40px] flex items-center justify-center mb-8 shadow-2xl shadow-pink-primary/40 animate-float overflow-hidden border-4 border-white"
       >
-        <img 
-          src={LOGO_URL} 
-          alt="PinkIt Logo" 
+        <img
+          src={LOGO_URL}
+          alt="PinkIt Logo"
           className="w-full h-full object-cover object-center"
           referrerPolicy="no-referrer"
         />
       </motion.div>
-      
-      <motion.h1 
+
+      <motion.h1
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative z-10 text-6xl font-bold text-white mb-2 drop-shadow-2xl">
+        className="relative z-10 text-6xl font-bold text-white mb-2 drop-shadow-2xl"
+      >
         PinkIt
       </motion.h1>
-      <motion.p 
+      <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="relative z-10 text-pink-soft mb-12 text-center font-semibold drop-shadow-lg"
+        className="relative z-10 text-pink-soft mb-8 text-center font-semibold drop-shadow-lg"
       >
-        Campus coordination, <span className="text-pink-primary font-bold">simplified.</span> 🎯
+        Firebase-auth campus access.
       </motion.p>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="relative z-10 w-full max-w-sm flex flex-col gap-6 mb-10"
+        className="relative z-10 w-full max-w-sm flex flex-col gap-4 mb-6"
       >
-        <div className="relative">
-          <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Your Name</label>
-          <input 
-            type="text" 
-            placeholder="e.g. Rahul Sharma"
-            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+        {isSignup && (
+          <div className="relative">
+            <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Your Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Rahul Sharma"
+              className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+        )}
         <div className="relative">
           <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Campus Email</label>
-          <input 
-            type="email" 
+          <input
+            type="email"
             placeholder="rahul@campus.edu"
             className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
+        <div className="relative">
+          <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Password</label>
+          <input
+            type="password"
+            placeholder="Min 6 characters"
+            className="w-full bg-white/10 backdrop-blur-xl rounded-[24px] p-5 text-sm text-white placeholder:text-white/40 focus:outline-none border-2 border-white/10 focus:border-pink-primary/40 shadow-xl"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        {authError && <p className="text-red-200 text-xs font-semibold">{authError}</p>}
       </motion.div>
 
-      <motion.button 
+      <motion.button
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5 }}
-        onClick={() => name && email && onLogin(name, email)}
-        disabled={!name || !email}
+        onClick={handleSubmit}
+        disabled={!canSubmit || isSubmitting}
         className="relative z-10 w-full max-w-sm py-5 bg-pink-primary text-white font-semibold rounded-[24px] shadow-2xl shadow-pink-primary/40 disabled:opacity-50 transition-all active:scale-95 uppercase tracking-wide text-sm hover:brightness-110"
       >
-        Let's Go! 🚀
+        {isSubmitting ? 'Please wait...' : isSignup ? 'Create Account' : 'Sign In'}
       </motion.button>
+
+      <button
+        onClick={() => {
+          setIsSignup(!isSignup);
+          setAuthError(null);
+        }}
+        className="relative z-10 mt-4 text-pink-soft text-sm font-semibold underline"
+      >
+        {isSignup ? 'Already have an account? Sign in' : 'New user? Create an account'}
+      </button>
     </div>
   );
 };
@@ -1693,7 +1738,8 @@ type AppData = {
 };
 
 export default function App() {
-  const [user, setUser] = useState<{ name: string, email: string } | null>(null);
+  const [user, setUser] = useState<{ uid: string, name: string, email: string } | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -1707,30 +1753,37 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Auto-login from localStorage for persistence
   useEffect(() => {
-    const savedUser = localStorage.getItem('pinkit_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-      const savedAdmin = localStorage.getItem('pinkit_admin') === 'true';
-      setIsAdmin(savedAdmin);
-    }
+    const unsubscribe = subscribeToAuth((authUser) => {
+      if (!authUser || !authUser.email) {
+        setUser(null);
+        setIsAdmin(false);
+        setAuthChecking(false);
+        return;
+      }
+
+      const email = authUser.email;
+      const name = authUser.displayName || email.split('@')[0] || 'Student';
+      setUser({ uid: authUser.uid, name, email });
+      setIsAdmin(ADMIN_EMAILS.includes(email));
+      setAuthChecking(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const handleLogin = (name: string, email: string) => {
-    const newUser = { name, email };
-    const adminStatus = ADMIN_EMAILS.includes(email);
-    setUser(newUser);
-    setIsAdmin(adminStatus);
-    localStorage.setItem('pinkit_user', JSON.stringify(newUser));
-    localStorage.setItem('pinkit_admin', adminStatus.toString());
+  const handleLogin = async (name: string, email: string, password: string, isSignup: boolean) => {
+    if (isSignup) {
+      await signUpUser(name, email, password);
+      return;
+    }
+    await signInUser(email, password);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser();
     setUser(null);
     setIsAdmin(false);
-    localStorage.removeItem('pinkit_user');
-    localStorage.removeItem('pinkit_admin');
   };
 
   const fetchAllData = async (force = false) => {
@@ -1769,6 +1822,7 @@ export default function App() {
         time: 'Just now',
         type,
         contact: user.email,
+        userId: user.uid,
         destination: details.dest,
         departureTime: details.time
       });
@@ -1782,12 +1836,13 @@ export default function App() {
   const handlePostReview = async (rating: number, comment: string) => {
     if (!reviewTarget || !user) return;
     try {
-      await dataService.postFeedback({
+      await dataService.postReview({
+        userId: user.uid,
         userName: user.name,
-        vendorOrDriverId: reviewTarget.id,
-        rating: rating.toString(),
+        targetId: reviewTarget.id,
+        rating,
         comment,
-        timestamp: new Date().toISOString()
+        date: new Date().toISOString()
       });
       alert('Thank you for your review!');
       fetchAllData(true);
@@ -1804,7 +1859,8 @@ export default function App() {
         request: `Suggested new contact: ${data.name} (${data.category}) - ${data.phone}. ${data.description}`,
         time: 'Just now',
         type: 'Review',
-        contact: user.email
+        contact: user.email,
+        userId: user.uid
       });
       alert(`Thanks for referring ${data.name}! We'll verify and add it soon.`);
     } catch (err) {
@@ -1834,6 +1890,7 @@ export default function App() {
       await dataService.postFeedback({
         userName: user.name,
         vendorOrDriverId: 'APP_FEEDBACK',
+        userId: user.uid,
         rating,
         comment,
         timestamp: new Date().toISOString()
@@ -1992,8 +2049,14 @@ export default function App() {
       case 'account': return 'My Account';
       default: return 'PinkIt';
     }
-  };
-
+  };
+  if (authChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-pink-soft">
+        <div className="w-10 h-10 border-4 border-pink-soft border-t-pink-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
   if (!user) {
     return <LoginScreen onLogin={handleLogin} />;
   }
@@ -2079,6 +2142,14 @@ export default function App() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
 
 
 
