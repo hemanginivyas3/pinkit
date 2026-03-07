@@ -515,7 +515,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
     { name: 'Grocery', icon: '🛒', color: 'bg-pink-soft text-pink-primary' },
     { name: 'Dhaba', icon: '🍛', color: 'bg-teal-soft text-teal-primary' },
     { name: 'Street Food', icon: '🌮', color: 'bg-pink-soft text-pink-primary' },
-    { name: 'Auto', icon: '🛵', color: 'bg-teal-soft text-teal-primary' },
+    { name: 'Auto', icon: '\uD83D\uDEFA', color: 'bg-teal-soft text-teal-primary' },
     { name: 'Cab', icon: '🚖', color: 'bg-pink-soft text-pink-primary' },
     { name: 'Parcel', icon: '📦', color: 'bg-teal-soft text-teal-primary' },
     { name: 'Pharmacy', icon: '💊', color: 'bg-pink-soft text-pink-primary' },
@@ -722,7 +722,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
       case 'Grocery': return '🛒';
       case 'Dhaba': return '🍛';
       case 'Street Food': return '🌮';
-      case 'Auto': return '🛵';
+      case 'Auto': return '\uD83D\uDEFA';
       case 'Cab': return '🚖';
       case 'Parcel': return '📦';
       case 'Pharmacy': return '💊';
@@ -869,7 +869,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-soft/40 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-300" />
             <div className="flex items-start gap-5 mb-6 relative z-10">
               <div className="w-20 h-20 bg-gradient-to-br from-teal-soft to-teal-primary/20 rounded-[24px] flex items-center justify-center text-4xl shadow-md border-2 border-teal-primary/30 flex-shrink-0">
-                🏎️
+                {getEmoji(d.type)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-2 gap-2">
@@ -985,7 +985,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-teal-soft rounded-2xl flex items-center justify-center text-3xl">
-                  {d.type === 'Auto' ? '�' : '🚖'}
+                  {d.type === 'Auto' ? '\uD83D\uDEFA' : '\uD83D\uDE96'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -2079,6 +2079,9 @@ export default function App() {
     </div>
   );
 }
+
+
+
 
 
 
