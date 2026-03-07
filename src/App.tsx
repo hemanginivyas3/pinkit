@@ -749,7 +749,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   );
 };
 
-const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
+const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver, rating?: number) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
   const filteredVendors = selectedCategory 
     ? vendors.filter(v => v.category === selectedCategory)
     : vendors;
@@ -862,9 +862,22 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                   </div>
                   {v.isVerified && <VerifiedBadge />}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap mb-3">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
                   <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{v.category}</span>
-                  {v.rating && <span className="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">⭐ {v.rating}</span>}
+                  {typeof v.rating === 'number' && (v.reviewCount ?? 0) > 0 && <span className='text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full'>{'\u2B50'} {v.rating.toFixed(1)} ({v.reviewCount})</span>}
+                </div>
+                <div className="flex items-center gap-1 mb-3">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">Rate</span>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={`vendor-rate-${v.id}-${star}`}
+                      onClick={() => onReview(v, star)}
+                      className="p-1 rounded-md bg-yellow-50 hover:bg-yellow-100 active:scale-90 transition-all"
+                      title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                    >
+                      <Star size={14} className="text-yellow-500" />
+                    </button>
+                  ))}
                 </div>
                 <div className="bg-pink-50 px-4 py-2.5 rounded-xl mb-3">
                   <p className="text-xs font-black text-pink-primary tracking-wide break-all">{v.phone}</p>
@@ -892,15 +905,9 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
               </a>
             </div>
             
-            <div className="flex gap-2 relative z-10">
-              <button 
-                onClick={() => onReview(v)}
-                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all"
-              >
-                ⭐ Review
-              </button>
-              <button className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                ➕ Save
+            <div className="relative z-10">
+              <button className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                Save
               </button>
             </div>
           </motion.div>
@@ -924,9 +931,22 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                   </div>
                   {d.isVerified && <VerifiedBadge />}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap mb-3">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
                   <span className="text-[10px] font-black bg-teal-soft text-teal-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{d.type}</span>
-                  {d.rating && <span className="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">⭐ {d.rating}</span>}
+                  {typeof d.rating === 'number' && (d.reviewCount ?? 0) > 0 && <span className='text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full'>{'\u2B50'} {d.rating.toFixed(1)} ({d.reviewCount})</span>}
+                </div>
+                <div className="flex items-center gap-1 mb-3">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">Rate</span>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={`driver-rate-${d.id}-${star}`}
+                      onClick={() => onReview(d, star)}
+                      className="p-1 rounded-md bg-yellow-50 hover:bg-yellow-100 active:scale-90 transition-all"
+                      title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                    >
+                      <Star size={14} className="text-yellow-500" />
+                    </button>
+                  ))}
                 </div>
                 <div className="bg-teal-50 px-4 py-2.5 rounded-xl mb-3">
                   <p className="text-xs font-black text-teal-primary tracking-wide break-all">{d.phone}</p>
@@ -953,15 +973,9 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
               </a>
             </div>
             
-            <div className="flex gap-2 relative z-10">
-              <button 
-                onClick={() => onReview(d)}
-                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all"
-              >
-                ⭐ Review
-              </button>
-              <button className="flex-1 py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                ➕ Save
+            <div className="relative z-10">
+              <button className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                Save
               </button>
             </div>
           </motion.div>
@@ -1833,22 +1847,27 @@ export default function App() {
     }
   };
 
-  const handlePostReview = async (rating: number, comment: string) => {
-    if (!reviewTarget || !user) return;
+  const submitReviewForTarget = async (target: Vendor | Driver, rating: number, comment: string) => {
+    if (!user) return;
     try {
       await dataService.postReview({
         userId: user.uid,
         userName: user.name,
-        targetId: reviewTarget.id,
+        targetId: target.id,
         rating,
         comment,
         date: new Date().toISOString()
       });
-      alert('Thank you for your review!');
       fetchAllData(true);
     } catch (err) {
       alert('Failed to post review.');
     }
+  };
+
+  const handlePostReview = async (rating: number, comment: string) => {
+    if (!reviewTarget) return;
+    await submitReviewForTarget(reviewTarget, rating, comment);
+    alert('Thank you for your review!');
   };
 
   const handleReferContact = async (data: any) => {
@@ -1990,7 +2009,11 @@ export default function App() {
             vendors={filteredVendors}
             drivers={filteredDrivers}
             essentialServices={appData?.essentialServices || []}
-            onReview={(v) => {
+            onReview={(v, rating) => {
+              if (typeof rating === 'number') {
+                submitReviewForTarget(v, rating, 'Quick rating from contact card');
+                return;
+              }
               setReviewTarget(v);
               setIsReviewOpen(true);
             }}
@@ -2049,7 +2072,8 @@ export default function App() {
       case 'account': return 'My Account';
       default: return 'PinkIt';
     }
-  };
+  };
+
   if (authChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-pink-soft">
@@ -2142,6 +2166,11 @@ export default function App() {
     </div>
   );
 }
+
+
+
+
+
 
 
 
