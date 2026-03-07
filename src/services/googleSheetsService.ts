@@ -84,49 +84,109 @@ const googleSheetsService = {
       for (let gid = 0; gid <= 10; gid++) {
         try {
           const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+          console.log(`📥 Fetching sheet tab ${gid} from:', ${CSV_URL}`);
+          
           const response = await fetch(CSV_URL, { 
             headers: { 'Accept': 'text/csv' }
           });
           
-          if (!response.ok) continue;
+          if (!response.ok) {
+            console.log(`⏭️ Sheet tab ${gid} not found or not accessible (${response.status})`);
+            continue;
+          }
           
           const csvText = await response.text();
-          if (!csvText || csvText.length < 10) continue; // Skip empty sheets
+          if (!csvText || csvText.length < 10) {
+            console.log(`⏭️ Sheet tab ${gid} is empty`);
+            continue;
+          }
           
-          const lines = csvText.split('\n').map(line => line.trim()).filter(line => line);
+          // Better CSV parsing that handles quoted fields
+          const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
           
-          if (lines.length < 2) continue; // Need header + at least 1 data row
+          if (lines.length < 2) {
+            console.log(`⏭️ Sheet tab ${gid} has no data rows`);
+            continue;
+          }
           
-          // Parse header row - try multiple common header patterns
-          const headerRow = lines[0].toLowerCase();
+          // Parse header row
+          const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+          console.log(`📋 Sheet ${gid} headers:`, headers);
+          
           const hasValidHeader = 
-            headerRow.includes('name') || 
-            headerRow.includes('contact') ||
-            headerRow.includes('service') ||
-            headerRow.includes('category') ||
-            headerRow.includes('phone');
+            headers.some(h => h === 'name' || h.includes('name')) &&
+            headers.some(h => h.includes('phone'));
           
-          if (!hasValidHeader) continue;
+          if (!hasValidHeader) {
+            console.log(`⏭️ Sheet ${gid} doesn't have required headers (name, phone)`);
+            continue;
+          }
           
-          // Detect column positions dynamically
-          const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-          const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('contact') || h.includes('service'));
-          const categoryIdx = headers.findIndex(h => h.includes('category') || h.includes('type') || h.includes('service'));
-          const phoneIdx = headers.findIndex(h => h.includes('phone') || h.includes('number') || h.includes('contact'));
-          const descIdx = headers.findIndex(h => h.includes('desc') || h.includes('detail') || h.includes('info'));
+          // Find column indices - prioritize Sub-Category over Category
+          const nameIdx = headers.findIndex(h => h === 'name' || h.includes('name'));
+          const categoryIdx = headers.findIndex(h => h === 'category' || h.includes('category'));
+          const subCategoryIdx = headers.findIndex(h => h === 'sub-category' || h.includes('sub') || h.includes('subcategory'));
+          const phoneIdx = headers.findIndex(h => h === 'phone' || h.includes('phone'));
+          const whatsappIdx = headers.findIndex(h => h === 'whatsapp' || h.includes('whatsapp'));
+          const costIdx = headers.findIndex(h => h === 'cost' || h.includes('cost'));
+          const ratingIdx = headers.findIndex(h => h === 'rating' || h.includes('rating'));
+          
+          console.log(`📍 Column indices: name=${nameIdx}, category=${categoryIdx}, subCategory=${subCategoryIdx}, phone=${phoneIdx}, whatsapp=${whatsappIdx}`);
+          
+          let sheetCount = 0;
           
           // Parse data rows
           for (let i = 1; i < lines.length; i++) {
-            const fields = lines[i].split(',').map(f => f.trim().replace(/^"|"$/g, ''));
+            const fields = lines[i].split(',').map(f => f.trim().replace(/^"|"$/g, '').trim());
             
-            if (fields.length < 2) continue;
+            if (fields.length < 3) continue;
             
-            const name = nameIdx >= 0 && fields[nameIdx] ? fields[nameIdx].trim() : '';
-            const category = categoryIdx >= 0 && fields[categoryIdx] ? fields[categoryIdx].trim() : '';
-            const phone = phoneIdx >= 0 && fields[phoneIdx] ? fields[phoneIdx].trim() : '';
-            const description = descIdx >= 0 && fields[descIdx] ? fields[descIdx].trim() : '';
+            const name = nameIdx >= 0 && fields[nameIdx] ? fields[nameIdx] : '';
+            let category = '';
             
-            if (name && category && phone) {
+            // Priority: Use Sub-Category first, fall back to Category
+            if (subCategoryIdx >= 0 && fields[subCategoryIdx]) {
+              category = fields[subCategoryIdx];
+            } else if (categoryIdx >= 0 && fields[categoryIdx]) {
+              category = fields[categoryIdx];
+            }
+            
+            const phone = phoneIdx >= 0 && fields[phoneIdx] ? fields[phoneIdx] : '';
+            const whatsapp = whatsappIdx >= 0 && fields[whatsappIdx] ? fields[whatsappIdx] : phone;
+            const cost = costIdx >= 0 && fields[costIdx] ? fields[costIdx] : '';
+            
+            if (!name || !phone) {
+              continue;
+            }
+            
+            // Normalize and map category names to app categories
+            category = category
+              .trim()
+              .toLowerCase()
+              .replace(/auto/i, 'Auto')
+              .replace(/cab/i, 'Cab')
+              .replace(/taxi/i, 'Cab')
+              .replace(/grocery/i, 'Grocery')
+              .replace(/dhaba/i, 'Dhaba')
+              .replace(/restaurant/i, 'Dhaba')
+              .replace(/street food/i, 'Street Food')
+              .replace(/cafe/i, 'Street Food')
+              .replace(/food delivery/i, 'Delivery')
+              .replace(/delivery/i, 'Delivery')
+              .replace(/courier/i, 'Parcel')
+              .replace(/parcel/i, 'Parcel')
+              .replace(/dessert/i, 'Street Food')
+              .replace(/general/i, 'Grocery')
+              .replace(/milk/i, 'Delivery');
+            
+            // Capitalize first letter
+            category = category.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            
+            if (!category) {
+              continue;
+            }
+            
+            try {
               const formattedPhone = formatPhoneNumber(phone);
               const parsedName = parseContactName(name);
               
@@ -134,24 +194,34 @@ const googleSheetsService = {
                 name: parsedName.displayName,
                 category,
                 phone: formattedPhone,
-                whatsapp: formattedPhone,
-                description: description || '',
+                whatsapp: whatsapp ? formatPhoneNumber(whatsapp) : formattedPhone,
+                description: cost || '',
                 verified: true,
                 ownerName: parsedName.ownerName,
                 businessName: parsedName.businessName
               });
+              
+              sheetCount++;
+              if (sheetCount <= 5) {
+                console.log(`✅ Row ${i+1}: ${name} (${category}) - Phone: ${formattedPhone}`);
+              }
+            } catch (parseErr) {
+              console.log(`⏭️ Row ${i}: Error parsing - ${parseErr}`);
+              continue;
             }
           }
+          
+          console.log(`✅ Sheet tab ${gid}: Loaded ${sheetCount} contacts`);
         } catch (err) {
-          // Continue to next sheet
+          console.log(`❌ Error fetching sheet tab ${gid}:`, err);
           continue;
         }
       }
       
-      // Return fetched data or empty array if none found
+      console.log(`🎉 Total contacts from Google Sheets: ${allContacts.length}`);
       return allContacts;
     } catch (error) {
-      console.error('Error fetching from Google Sheets:', error);
+      console.error('❌ Error fetching from Google Sheets:', error);
       return [];
     }
   },

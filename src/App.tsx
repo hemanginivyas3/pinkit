@@ -258,7 +258,8 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
   const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-xl border-t border-pink-100 px-6 py-4 pb-8 flex justify-between items-center z-50 rounded-t-[40px] shadow-[0_-10px_30px_rgba(255,45,85,0.05)] md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 md:hidden w-full bg-white/95 backdrop-blur-xl border-t border-pink-100 px-6 py-4 flex justify-center items-center z-50 shadow-[0_-10px_30px_rgba(255,45,85,0.1)]">
+      <div className="w-full max-w-2xl flex justify-between items-center rounded-t-[40px]">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -293,6 +294,7 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
           </button>
         );
       })}
+      </div>
     </nav>
   );
 };
@@ -2018,7 +2020,7 @@ export default function App() {
         isAdmin={isAdmin}
       />
 
-      <div className="w-full md:flex-1 max-w-2xl md:max-w-none bg-white/40 backdrop-blur-sm min-h-screen relative pb-24 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
+      <div className="w-full md:flex-1 md:ml-64 max-w-2xl md:max-w-none bg-white/40 backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
         <Header 
           title={getPageTitle()} 
           showSearch={activeTab === 'home' || activeTab === 'categories'} 
