@@ -248,16 +248,17 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
 const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTab: string, setActiveTab: (tab: string) => void, onBackClick?: () => void, isAdmin?: boolean }) => {
   const baseTabs = [
     { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
-    { id: 'services', label: 'Services', icon: LayoutGrid, emoji: '🛒' },
-    { id: 'community', label: 'Community', icon: Users, emoji: '👥' },
-    { id: 'profile', label: 'Profile', icon: User, emoji: '👤' },
+    { id: 'categories', label: 'Categories', icon: LayoutGrid, emoji: '🛍️' },
+    { id: 'feed', label: 'Posts/Feed', icon: Users, emoji: '📱' },
+    { id: 'forum', label: 'Forum', icon: MessageSquare, emoji: '💬' },
+    { id: 'account', label: 'Account', icon: User, emoji: '👤' },
   ];
 
   const adminTab = { id: 'admin', label: 'Admin', icon: Shield, emoji: '🛡️' };
   const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-xl border-t border-pink-100 px-6 py-4 pb-8 flex justify-between items-center z-50 rounded-t-[40px] shadow-[0_-10px_30px_rgba(255,45,85,0.05)]">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-xl border-t border-pink-100 px-6 py-4 pb-8 flex justify-between items-center z-50 rounded-t-[40px] shadow-[0_-10px_30px_rgba(255,45,85,0.05)] md:hidden">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -265,7 +266,7 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
             key={tab.id}
             onClick={() => {
               setActiveTab(tab.id);
-              if (tab.id !== 'services') onBackClick?.();
+              if (tab.id !== 'categories') onBackClick?.();
             }}
             className={`flex flex-col items-center gap-1 transition-all active:scale-90 ${
               isActive ? 'text-pink-primary' : 'text-slate-400'
@@ -292,6 +293,63 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
           </button>
         );
       })}
+    </nav>
+  );
+};
+
+const SidebarNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTab: string, setActiveTab: (tab: string) => void, onBackClick?: () => void, isAdmin?: boolean }) => {
+  const baseTabs = [
+    { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
+    { id: 'categories', label: 'Categories', icon: LayoutGrid, emoji: '🛍️' },
+    { id: 'feed', label: 'Posts/Feed', icon: Users, emoji: '📱' },
+    { id: 'forum', label: 'Forum', icon: MessageSquare, emoji: '💬' },
+    { id: 'account', label: 'Account', icon: User, emoji: '👤' },
+  ];
+
+  const adminTab = { id: 'admin', label: 'Admin', icon: Shield, emoji: '🛡️' };
+  const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
+
+  return (
+    <nav className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:bg-gradient-to-b md:from-pink-primary md:to-pink-600 md:flex md:flex-col md:p-6 md:gap-4 md:z-50 md:shadow-lg md:overflow-y-auto">
+      <div className="mb-8">
+        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/20 overflow-hidden border-2 border-pink-primary/20">
+          <img 
+            src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
+            alt="PinkIt Logo" 
+            className="w-full h-full object-contain p-1"
+            referrerPolicy="no-referrer"
+          />
+        </div>
+        <h1 className="text-white text-xl font-bold mt-2 tracking-tight">PinkIt</h1>
+        <p className="text-pink-100 text-xs font-semibold uppercase tracking-wide">Campus App</p>
+      </div>
+
+      <div className="flex-1 flex flex-col gap-2">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                if (tab.id !== 'categories') onBackClick?.();
+              }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                isActive 
+                  ? 'bg-white text-pink-primary shadow-lg' 
+                  : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span className="text-xl">{tab.emoji}</span>
+              <span className="font-semibold text-sm">{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="text-center text-pink-100 text-xs font-semibold opacity-60 py-2">
+        © 2026 PinkIt
+      </div>
     </nav>
   );
 };
@@ -642,7 +700,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   );
 };
 
-const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
+const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
   const filteredVendors = selectedCategory 
     ? vendors.filter(v => v.category === selectedCategory)
     : vendors;
@@ -681,7 +739,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, ess
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="px-6 pb-24"
+      className="px-6 pb-24 md:pb-6 md:ml-64"
     >
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
@@ -691,7 +749,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, ess
             </button>
           )}
           <h2 className="text-2xl font-bold text-pink-primary">
-            {selectedCategory ? `${selectedCategory}` : '✨ All Services'}
+            {selectedCategory ? `${selectedCategory}` : '✨ All Categories'}
           </h2>
         </div>
         <button 
@@ -704,7 +762,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, ess
       </div>
 
       {!selectedCategory && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-10">
           {categories.map((cat) => (
             <motion.button
               key={cat}
@@ -722,16 +780,16 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, ess
         </div>
       )}
 
-      <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVendors.length === 0 && filteredDrivers.length === 0 && selectedCategory && (
-          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+          <div className="col-span-full text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">📭 No contacts found</p>
             <p className="text-slate-400 font-bold text-sm mb-6">No services in this category yet. Be the first to add one!</p>
             <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Add a contact</button>
           </div>
         )}
         {filteredVendors.length === 0 && !selectedCategory && (
-          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+          <div className="col-span-full text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">🔍 No results</p>
             <p className="text-slate-400 font-bold text-sm">Try a different search or select a category above</p>
           </div>
@@ -977,7 +1035,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
   );
 };
 
-const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }: { onPostRide: () => void, onPostReview: () => void, onRefer: () => void, posts: CommunityPost[], onInterest: (id: string) => void, user: { name: string } }) => {
+const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }: { onPostRide: () => void, onPostReview: () => void, onRefer: () => void, posts: CommunityPost[], onInterest: (id: string) => void, user: { name: string } }) => {
   const [tab, setTab] = useState<'posts' | 'feedback'>('posts');
 
   return (
@@ -1122,7 +1180,7 @@ const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, u
   );
 };
 
-const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name: string, email: string }, onLogout: () => void, onComplaint: (issue: string) => void, onFeedback: (rating: string, comment: string) => void }) => {
+const AccountPage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name: string, email: string }, onLogout: () => void, onComplaint: (issue: string) => void, onFeedback: (rating: string, comment: string) => void }) => {
   const [showComplaint, setShowComplaint] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState('');
@@ -1322,6 +1380,171 @@ const ProfilePage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.div>
+  );
+};
+
+const ForumPage = ({ user, onPostThread }: { user: { name: string }, onPostThread: () => void }) => {
+  const [threads, setThreads] = useState([
+    {
+      id: '1',
+      author: 'Ananya Singh',
+      title: '🏆 Best deals on campus right now?',
+      content: 'Looking for the best discounts and deals available at IIM Rohtak right now. Share your recommendations!',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      upvotes: 24,
+      comments: 8,
+      category: 'Deals'
+    },
+    {
+      id: '2',
+      author: 'Rohit Kumar',
+      title: '❓ Anyone knows good restaurants near campus?',
+      content: 'New to campus, need recommendations for good food places. Budget-friendly preferably.',
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      upvotes: 18,
+      comments: 12,
+      category: 'Food'
+    },
+    {
+      id: '3',
+      author: 'Priya Patel',
+      title: '🚗 Carpool buddies needed for weekend trips',
+      content: 'Anyone interested in carpooling for weekend trips to Delhi? Sharing costs would help.',
+      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      upvotes: 15,
+      comments: 6,
+      category: 'Transport'
+    },
+  ]);
+
+  const [newThread, setNewThread] = useState('');
+  const [newThreadTitle, setNewThreadTitle] = useState('');
+  const [showNewThread, setShowNewThread] = useState(false);
+
+  const handlePostThread = () => {
+    if (newThreadTitle.trim() && newThread.trim()) {
+      setThreads([{
+        id: Date.now().toString(),
+        author: user.name,
+        title: newThreadTitle,
+        content: newThread,
+        timestamp: new Date(),
+        upvotes: 0,
+        comments: 0,
+        category: 'General'
+      }, ...threads]);
+      setNewThread('');
+      setNewThreadTitle('');
+      setShowNewThread(false);
+    }
+  };
+
+  const formatTime = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (hours < 1) return 'just now';
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="px-6 pb-24 md:pb-6 md:ml-64"
+    >
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-bold text-pink-primary">💬 Community Forum</h2>
+        <button 
+          onClick={() => setShowNewThread(!showNewThread)}
+          className="p-3 bg-pink-primary text-white rounded-2xl flex items-center gap-2 text-xs font-semibold uppercase tracking-wide shadow-lg shadow-pink-primary/20 active:scale-95 transition-all hover:brightness-110"
+        >
+          <PlusCircle size={18} />
+          New Thread
+        </button>
+      </div>
+
+      {showNewThread && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-[24px] p-6 mb-6 border-2 border-pink-primary/20 shadow-lg"
+        >
+          <input 
+            type="text"
+            placeholder="Thread title..."
+            value={newThreadTitle}
+            onChange={(e) => setNewThreadTitle(e.target.value)}
+            className="w-full bg-pink-50 rounded-xl py-3 px-4 text-sm font-semibold mb-4 border-2 border-pink-100 focus:outline-none focus:border-pink-primary transition-all"
+          />
+          <textarea 
+            placeholder="What's on your mind? Share your thoughts, questions, or tips with the campus community..."
+            value={newThread}
+            onChange={(e) => setNewThread(e.target.value)}
+            className="w-full bg-pink-50 rounded-xl py-3 px-4 text-sm mb-4 border-2 border-pink-100 focus:outline-none focus:border-pink-primary transition-all resize-none h-24"
+          />
+          <div className="flex gap-3">
+            <button 
+              onClick={handlePostThread}
+              className="flex-1 bg-pink-primary text-white font-bold py-3 rounded-xl uppercase tracking-widest text-xs active:scale-95 transition-all"
+            >
+              Post Thread
+            </button>
+            <button 
+              onClick={() => setShowNewThread(false)}
+              className="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl uppercase tracking-widest text-xs active:scale-95 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      <div className="space-y-4">
+        {threads.map((thread) => (
+          <motion.div 
+            key={thread.id}
+            whileHover={{ scale: 1.01 }}
+            className="bg-white rounded-[24px] p-6 border-2 border-pink-primary/20 shadow-md hover:shadow-xl hover:border-pink-primary/40 transition-all cursor-pointer group"
+          >
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-soft to-pink-primary/20 flex items-center justify-center text-sm font-bold text-pink-primary flex-shrink-0">
+                {thread.author.substring(0, 1).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <span className="font-bold text-slate-900">{thread.author}</span>
+                  <span className="text-xs text-slate-500 font-semibold">{formatTime(thread.timestamp)}</span>
+                  <span className="text-[10px] font-black bg-purple-soft text-purple-primary px-2 py-1 rounded-full uppercase tracking-wide">{thread.category}</span>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 break-words group-hover:text-pink-primary transition-colors">{thread.title}</h3>
+                <p className="text-sm text-slate-600 line-clamp-2">{thread.content}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-6 text-sm font-bold text-slate-600 border-t-2 border-pink-100 pt-4">
+              <button className="flex items-center gap-1 hover:text-pink-primary transition-colors active:scale-95">
+                <span>👍</span>
+                <span>{thread.upvotes}</span>
+              </button>
+              <button className="flex items-center gap-1 hover:text-pink-primary transition-colors active:scale-95">
+                <span>💬</span>
+                <span>{thread.comments}</span>
+              </button>
+              <button className="flex items-center gap-1 hover:text-pink-primary transition-colors active:scale-95">
+                <span>🔗</span>
+                <span>Share</span>
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </motion.div>
   );
 };
@@ -1697,9 +1920,9 @@ export default function App() {
     switch (activeTab) {
       case 'home':
         return <HomePage onCategoryClick={handleCategoryClick} vendors={filteredVendors} drivers={filteredDrivers} />;
-      case 'services':
+      case 'categories':
         return (
-          <ServicesPage 
+          <CategoriesPage 
             selectedCategory={selectedCategory} 
             onBack={() => setSelectedCategory(null)} 
             onRefer={() => setIsReferOpen(true)}
@@ -1714,9 +1937,9 @@ export default function App() {
             onPostRide={() => setIsPostRideOpen(true)}
           />
         );
-      case 'community':
+      case 'feed':
         return (
-          <CommunityPage 
+          <FeedPage 
             onPostRide={() => setIsPostRideOpen(true)} 
             onPostReview={() => {
               setReviewTarget(null);
@@ -1726,6 +1949,13 @@ export default function App() {
             posts={appData?.communityPosts || []}
             onInterest={handleInterest}
             user={user}
+          />
+        );
+      case 'forum':
+        return (
+          <ForumPage 
+            user={user}
+            onPostThread={() => {}}
           />
         );
       case 'admin':
@@ -1741,8 +1971,8 @@ export default function App() {
             onDeleteDriver={handleDeleteDriver}
           />
         );
-      case 'profile':
-        return <ProfilePage user={user} onLogout={handleLogout} onComplaint={handleComplaint} onFeedback={handleAppFeedback} />;
+      case 'account':
+        return <AccountPage user={user} onLogout={handleLogout} onComplaint={handleComplaint} onFeedback={handleAppFeedback} />;
       default:
         return <HomePage onCategoryClick={handleCategoryClick} vendors={filteredVendors} drivers={filteredDrivers} />;
     }
@@ -1751,10 +1981,11 @@ export default function App() {
   const getPageTitle = () => {
     switch (activeTab) {
       case 'home': return 'PinkIt';
-      case 'services': return selectedCategory ? `${selectedCategory}` : 'Services';
-      case 'community': return 'Community';
+      case 'categories': return selectedCategory ? `${selectedCategory}` : 'Categories';
+      case 'feed': return 'Posts & Feed';
+      case 'forum': return 'Community Forum';
       case 'admin': return 'Admin Panel';
-      case 'profile': return 'Profile';
+      case 'account': return 'My Account';
       default: return 'PinkIt';
     }
   };
@@ -1764,7 +1995,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-pink-soft relative flex flex-col items-center">
+    <div className="min-h-screen bg-pink-soft relative flex flex-col md:flex-row">
       {/* Background Image */}
       <div className="fixed inset-0 pointer-events-none opacity-5 z-0">
         <img 
@@ -1775,10 +2006,22 @@ export default function App() {
         />
       </div>
 
-      <div className="w-full max-w-2xl bg-white/40 backdrop-blur-sm min-h-screen relative pb-24 shadow-2xl shadow-pink-primary/5 z-10 border-x border-pink-100/50">
+      {/* Sidebar Navigation for Laptop */}
+      <SidebarNav 
+        activeTab={activeTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          if (tab !== 'categories') setSelectedCategory(null);
+          setSearchQuery('');
+        }}
+        onBackClick={() => setSelectedCategory(null)}
+        isAdmin={isAdmin}
+      />
+
+      <div className="w-full md:flex-1 max-w-2xl md:max-w-none bg-white/40 backdrop-blur-sm min-h-screen relative pb-24 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
         <Header 
           title={getPageTitle()} 
-          showSearch={activeTab === 'home' || activeTab === 'services'} 
+          showSearch={activeTab === 'home' || activeTab === 'categories'} 
           onSearch={setSearchQuery} 
           onRefresh={() => fetchAllData(true)}
           isLoading={isLoading}
@@ -1803,7 +2046,7 @@ export default function App() {
         activeTab={activeTab} 
         setActiveTab={(tab) => {
           setActiveTab(tab);
-          if (tab !== 'services') setSelectedCategory(null);
+          if (tab !== 'categories') setSelectedCategory(null);
           setSearchQuery('');
         }}
         onBackClick={() => setSelectedCategory(null)}
