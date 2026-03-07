@@ -801,6 +801,12 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
         <h2 className="text-3xl font-black mb-2 italic">🛵 Campus Rides</h2>
         <p className="text-pink-soft text-sm font-bold opacity-80">Direct contact with trusted drivers.</p>
+        <button 
+          onClick={onPostRide}
+          className="mt-4 px-6 py-3 bg-white text-pink-primary font-black rounded-2xl text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+        >
+          + Post Ride Request
+        </button>
       </div>
 
       {/* Filter Tabs */}
@@ -818,9 +824,16 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
         ))}
       </div>
 
-      <h3 className="font-bold mb-4">{filter} Drivers</h3>
+      <h3 className="font-bold mb-4 text-slate-700 uppercase tracking-wider text-sm">{filter} Drivers ({filteredDrivers.length})</h3>
       <div className="flex flex-col gap-4">
-        {filteredDrivers.map((d) => (
+        {filteredDrivers.length === 0 ? (
+          <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
+            <p className="text-slate-600 font-black text-lg mb-4">🚗 No drivers available</p>
+            <p className="text-slate-400 font-bold text-sm mb-6">No {filter.toLowerCase()} drivers available right now.</p>
+            <button onClick={onPostRide} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Post a ride request</button>
+          </div>
+        ) : (
+          filteredDrivers.map((d) => (
           <motion.div 
             key={d.id} 
             whileHover={{ scale: 1.02 }}
@@ -864,19 +877,20 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex gap-2 mt-4">
               <button 
                 onClick={() => onReview(d)}
-                className="flex-1 py-3 text-slate-500 font-black text-xs bg-slate-100 rounded-xl uppercase tracking-wider"
+                className="flex-1 py-3 text-slate-600 font-black text-xs bg-slate-100 hover:bg-slate-200 rounded-xl uppercase tracking-wider active:scale-95 transition-all"
               >
-                Leave Review
+                ⭐ Review
               </button>
               <button 
                 onClick={onPostRide}
-                className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft rounded-xl uppercase tracking-wider"
+                className="flex-1 py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-xl uppercase tracking-wider active:scale-95 transition-all"
               >
-                🛵 Share Ride
+                📍 Join Ride
               </button>
             </div>
           </motion.div>
-        ))}
+        ))
+        )}
       </div>
     </motion.div>
   );
