@@ -44,7 +44,9 @@ const ADMIN_EMAILS = [
   'ipm06sangeethav@iimrohtak.ac.in'
 ];
 
-// --- Components ---
+
+const LOGO_URL = `${import.meta.env.BASE_URL}pinkitlogo.jpeg?v=3`;
+const BANNER_URL = `${import.meta.env.BASE_URL}pinkitbanner.png?v=1`;
 
 const PriceTagBadge = ({ tag }: { tag?: PriceTag }) => {
   if (!tag) return null;
@@ -258,7 +260,7 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
   const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 md:hidden w-full bg-white/95 backdrop-blur-xl border-t border-pink-100 px-6 py-4 flex justify-center items-center z-50 shadow-[0_-10px_30px_rgba(255,45,85,0.1)]">
+    <nav className="fixed bottom-0 left-0 right-0 md:hidden w-full bg-white/95 backdrop-blur-xl border-t border-pink-100 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-center items-center z-[90] shadow-[0_-10px_30px_rgba(255,45,85,0.1)]">
       <div className="w-full max-w-2xl flex justify-between items-center rounded-t-[40px]">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
@@ -314,11 +316,11 @@ const SidebarNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeT
   return (
     <nav className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:bg-gradient-to-b md:from-pink-primary md:to-pink-600 md:flex md:flex-col md:p-6 md:gap-4 md:z-50 md:shadow-lg md:overflow-y-auto">
       <div className="mb-8">
-        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/20 overflow-hidden border-2 border-pink-primary/20">
+        <div className="w-14 h-14 bg-white/20 rounded-[20px] flex items-center justify-center shadow-lg shadow-pink-primary/20 overflow-hidden border border-white/40">
           <img 
-            src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
+            src={LOGO_URL} 
             alt="PinkIt Logo" 
-            className="w-full h-full object-contain p-1"
+            className="w-full h-full object-cover object-center"
             referrerPolicy="no-referrer"
           />
         </div>
@@ -362,9 +364,9 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-primary/10 overflow-hidden border-2 border-pink-primary">
           <img 
-            src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
+            src={LOGO_URL} 
             alt="PinkIt Logo" 
-            className="w-full h-full object-contain p-1"
+            className="w-full h-full object-cover object-center"
             referrerPolicy="no-referrer"
           />
         </div>
@@ -426,9 +428,9 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string) => vo
         className="relative z-10 w-32 h-32 bg-white rounded-[40px] flex items-center justify-center mb-8 shadow-2xl shadow-pink-primary/40 animate-float overflow-hidden border-4 border-white"
       >
         <img 
-          src="https://i.postimg.cc/YqVPH9m0/pinkit-logo.png" 
+          src={LOGO_URL} 
           alt="PinkIt Logo" 
-          className="w-full h-full object-contain p-2"
+          className="w-full h-full object-cover object-center"
           referrerPolicy="no-referrer"
         />
       </motion.div>
@@ -528,15 +530,15 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
       className="px-6 pb-24"
     >
       {/* Banner */}
-      <div className="relative h-48 rounded-[40px] overflow-hidden mb-10 shadow-2xl shadow-pink-primary/20 group">
+      <div className="relative w-full aspect-[1795/511] rounded-[40px] overflow-hidden mb-10 shadow-2xl shadow-pink-primary/20 group">
         <img 
-          src="https://i.postimg.cc/d1Yj855X/Whats-App-Image-2026-03-05-at-7-56-38-PM.jpg" 
-          alt="PinkIt Banner" 
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          src={BANNER_URL}
+          alt="PinkIt Banner"
+          className="absolute inset-0 w-full h-full object-cover"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 p-8 z-10">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-6 z-10">
           <AnimatePresence mode="wait">
             <motion.div
               key={quoteIndex}
@@ -544,7 +546,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <p className="text-white font-black text-2xl leading-tight max-w-[240px] italic tracking-tighter drop-shadow-lg">
+              <p className="text-white font-black text-2xl leading-tight max-w-[280px] italic tracking-tighter px-4 py-2 rounded-2xl bg-black/35 backdrop-blur-[2px] shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
                 {quotes[quoteIndex]}
               </p>
             </motion.div>
@@ -2020,7 +2022,7 @@ export default function App() {
         isAdmin={isAdmin}
       />
 
-      <div className="w-full md:flex-1 md:ml-64 max-w-2xl md:max-w-none bg-white/40 backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
+      <div className="w-full md:flex-1 md:ml-64 max-w-2xl md:max-w-none bg-white/40 md:backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
         <Header 
           title={getPageTitle()} 
           showSearch={activeTab === 'home' || activeTab === 'categories'} 
@@ -2077,3 +2079,17 @@ export default function App() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
