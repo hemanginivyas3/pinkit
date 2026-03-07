@@ -57,6 +57,8 @@ export interface Vendor {
   menu?: MenuItem[];
   isVerified?: boolean;
   description?: string;
+  ownerName?: string;
+  businessName?: string;
 }
 
 export interface Driver {
@@ -71,6 +73,7 @@ export interface Driver {
   vehicleNumber?: string;
   isVerified: boolean;
   priceTag?: PriceTag;
+  ownerName?: string;
 }
 
 export interface EssentialService {

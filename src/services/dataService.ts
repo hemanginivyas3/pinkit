@@ -33,6 +33,8 @@ const dataService = {
           image: '',
           isVerified: c.verified || false,
           description: c.description,
+          ownerName: c.ownerName,
+          businessName: c.businessName,
         }));
 
       const drivers = sheetContacts
@@ -45,6 +47,7 @@ const dataService = {
           whatsapp: c.whatsapp || c.phone,
           isVerified: c.verified || false,
           priceRange: c.description,
+          ownerName: c.ownerName,
         }));
 
       // Merge with Firebase vendors (student-added contacts)
@@ -89,6 +92,9 @@ const dataService = {
             whatsapp: c.whatsapp,
             image: '',
             isVerified: c.verified || false,
+            description: c.description,
+            ownerName: c.ownerName,
+            businessName: c.businessName,
           })),
         drivers: sampleContacts
           .filter(c => ['Auto', 'Cab', 'Bus', 'Taxi'].includes(c.category))
@@ -99,6 +105,7 @@ const dataService = {
             phone: c.phone,
             whatsapp: c.whatsapp,
             isVerified: c.verified || false,
+            ownerName: c.ownerName,
           })),
         communityPosts: [],
         routeFares: [],

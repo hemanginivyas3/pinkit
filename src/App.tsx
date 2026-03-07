@@ -319,7 +319,7 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-primary group-focus-within:text-pink-hot transition-colors" size={20} />
         <input 
           type="text" 
-          placeholder="🔍 Search vibes, legends..." 
+          placeholder="🔍 Search services, contacts..." 
           className="w-full bg-white rounded-2xl py-4 pl-12 pr-4 text-sm font-bold shadow-md border-2 border-pink-primary/20 focus:outline-none focus:border-pink-primary/50 transition-all placeholder:text-slate-400"
           onChange={(e) => onSearch?.(e.target.value)}
         />
@@ -505,7 +505,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
       {/* Rohtak Spots Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-black italic text-pink-hot">Rohtak Vibe Check ✨</h2>
+          <h2 className="text-xl font-black italic text-pink-hot">Popular Spots ✨</h2>
           <span className="text-[10px] font-black bg-pink-primary text-white px-2 py-1 rounded-full uppercase">Top Picks</span>
         </div>
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
@@ -553,8 +553,8 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
         exit={{ y: 100 }}
         className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
       >
-        <h3 className="text-3xl font-black mb-2 italic tracking-tighter">💡 Refer a Vibe</h3>
-        <p className="text-slate-500 mb-8 font-bold">Help the community grow by adding a trusted service.</p>
+        <h3 className="text-3xl font-black mb-2 italic tracking-tighter">💡 Suggest a Service</h3>
+        <p className="text-slate-500 mb-8 font-bold">Help the community grow by adding a trusted contact.</p>
         
         <div className="flex flex-col gap-6 mb-10">
           <div>
@@ -671,7 +671,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
             </button>
           )}
           <h2 className="text-2xl font-black italic tracking-tighter text-pink-hot">
-            {selectedCategory ? `${getEmoji(selectedCategory)} ${selectedCategory}` : '✨ All Vibes'}
+            {selectedCategory ? `${getEmoji(selectedCategory)} ${selectedCategory}` : '✨ All Services'}
           </h2>
         </div>
         <button 
@@ -679,7 +679,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
           className="p-3 bg-pink-primary text-white rounded-2xl flex items-center gap-2 text-xs font-black uppercase tracking-widest shadow-lg shadow-pink-primary/20 active:scale-95 transition-all"
         >
           <PlusCircle size={18} />
-          🎯 Add Vibe
+          ➕ Suggest
         </button>
       </div>
 
@@ -706,8 +706,8 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
         {filteredVendors.length === 0 && selectedCategory && (
           <div className="text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">📭 No contacts found</p>
-            <p className="text-slate-400 font-bold text-sm mb-6">No legends in this category yet.</p>
-            <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Be the first to add!</button>
+            <p className="text-slate-400 font-bold text-sm mb-6">No services in this category yet. Be the first to add one!</p>
+            <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Add a contact</button>
           </div>
         )}
         {filteredVendors.length === 0 && !selectedCategory && (
@@ -729,7 +729,10 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-2 gap-2">
-                  <h3 className="font-black text-lg tracking-tight text-slate-900 break-words">{v.name}</h3>
+                  <div className="flex-1">
+                    <h3 className="font-black text-lg tracking-tight text-slate-900 break-words">{v.name}</h3>
+                    {v.ownerName && <p className="text-xs text-slate-500 font-bold">Operator: {v.ownerName}</p>}
+                  </div>
                   {v.isVerified && <VerifiedBadge />}
                 </div>
                 <div className="flex items-center gap-2 flex-wrap mb-3">
@@ -738,7 +741,7 @@ const ServicesPage = ({ selectedCategory, onBack, onRefer, vendors, essentialSer
                 </div>
                 <div className="bg-pink-50 px-4 py-2.5 rounded-xl mb-3">
                   <p className="text-xs font-black text-pink-primary tracking-wide break-all">{v.phone}</p>
-                  {v.description && <p className="text-xs text-slate-600 font-bold mt-1 line-clamp-1">{v.description}</p>}
+                  {v.description && <p className="text-xs text-slate-600 font-bold mt-1 line-clamp-2">{v.description}</p>}
                 </div>
               </div>
             </div>
@@ -826,13 +829,14 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-teal-soft rounded-2xl flex items-center justify-center text-3xl">
-                  {d.type === 'Auto' ? '🚗' : '🛵'}
+                  {d.type === 'Auto' ? '�' : '🚖'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-black text-xl">{d.name}</h4>
                     {d.isVerified && <VerifiedBadge />}
                   </div>
+                  {d.ownerName && <p className="text-xs text-slate-500 font-bold mb-1">Operator: {d.ownerName}</p>}
                   <span className="text-[10px] font-black bg-slate-100 text-slate-400 px-2 py-1 rounded-lg uppercase tracking-wider">{d.type} Driver</span>
                 </div>
               </div>
@@ -1005,7 +1009,7 @@ const CommunityPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, u
         <div className="flex-1 relative">
           <input 
             type="text" 
-            placeholder="Type a vibe... ✨" 
+            placeholder="Share your thoughts & feedback..." 
             className="w-full bg-pink-soft/50 rounded-2xl py-4 px-6 text-sm font-bold focus:outline-none border-2 border-transparent focus:border-pink-primary/20 transition-all"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -1512,11 +1516,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-pink-soft relative flex flex-col items-center">
-      {/* Background Vibe */}
+      {/* Background Image */}
       <div className="fixed inset-0 pointer-events-none opacity-5 z-0">
         <img 
           src="https://i.postimg.cc/d1Yj855X/Whats-App-Image-2026-03-05-at-7-56-38-PM.jpg" 
-          alt="Vibe" 
+          alt="Background" 
           className="w-full h-full object-cover blur-3xl"
           referrerPolicy="no-referrer"
         />
