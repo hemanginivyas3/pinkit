@@ -741,7 +741,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="px-6 pb-24 md:pb-6 md:ml-64"
+      className="px-6 pb-24 md:pb-6"
     >
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
@@ -1459,7 +1459,7 @@ const ForumPage = ({ user, onPostThread }: { user: { name: string }, onPostThrea
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="px-6 pb-24 md:pb-6 md:ml-64"
+      className="px-6 pb-24 md:pb-6"
     >
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-pink-primary">💬 Community Forum</h2>
@@ -1751,7 +1751,7 @@ export default function App() {
 
   const handleCategoryClick = (cat: Category) => {
     setSelectedCategory(cat);
-    setActiveTab('services');
+    setActiveTab('categories');
   };
 
   const handlePostToCommunity = async (type: 'Ride' | 'Order', details: any) => {

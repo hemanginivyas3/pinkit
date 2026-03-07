@@ -1,0 +1,870 @@
+{
+  "vendors": [
+    {
+      "id": "diwaan-grocery",
+      "name": "Diwaan",
+      "category": "Grocery",
+      "phone": "+918607846246",
+      "whatsapp": "+918607846246",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "azad-grocery",
+      "name": "Azad",
+      "category": "Grocery",
+      "phone": "+919315421193",
+      "whatsapp": "+919315421193",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikas-grocery",
+      "name": "Vikas",
+      "category": "Grocery",
+      "phone": "+918950978191",
+      "whatsapp": "+918950978191",
+      "isVerified": true,
+      "notes": "Also listed under Flowers"
+    },
+    {
+      "id": "rahul-general",
+      "name": "Rahul",
+      "category": "General Store",
+      "phone": "+917494873259",
+      "whatsapp": "+917494873259",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "saurav-general",
+      "name": "Saurav",
+      "category": "General Store",
+      "phone": "+918570959348",
+      "whatsapp": "+918570959348",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "dinesh-milk",
+      "name": "Dinesh Milkman",
+      "category": "Milk",
+      "phone": "+919812600201",
+      "whatsapp": "+919812600201",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "pranav-courier",
+      "name": "Pranav Delhivery",
+      "category": "Parcel",
+      "phone": "+919945590393",
+      "whatsapp": "+919945590393",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "pranay-courier",
+      "name": "Pranay Saboo Delhivery",
+      "category": "Parcel",
+      "phone": "+919945588363",
+      "whatsapp": "+919945588363",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sunil-delivery",
+      "name": "Sunil (Madras Delivery)",
+      "category": "Food Delivery",
+      "phone": "+918684812062",
+      "whatsapp": "+918684812062",
+      "isVerified": true,
+      "notes": "Madras Cafe delivery"
+    },
+    {
+      "id": "dhabha-24",
+      "name": "Dhabha 24",
+      "category": "Dhaba",
+      "phone": "+917206992551",
+      "whatsapp": "+917206992551",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sahil-dhaba",
+      "name": "Sahil",
+      "category": "Dhaba",
+      "phone": "+919050098205",
+      "whatsapp": "+919050098205",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "raju-restaurant",
+      "name": "Raju",
+      "category": "Restaurant",
+      "phone": "+918929697844",
+      "whatsapp": "+918929697844",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "dudes-cafe",
+      "name": "Dude's Cafe",
+      "category": "Cafe",
+      "phone": "+919991119139",
+      "whatsapp": "+919991119139",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "icecream-dessert",
+      "name": "Icecream",
+      "category": "Dessert",
+      "phone": "+919829698620",
+      "whatsapp": "+919829698620",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "rajeev-restaurant",
+      "name": "Rajeev Sharma",
+      "category": "Restaurant",
+      "phone": "+919802108888",
+      "whatsapp": "+919802108888",
+      "isVerified": true,
+      "notes": "Madras Cafe"
+    },
+    {
+      "id": "vinod-restaurant",
+      "name": "Vinod",
+      "category": "Restaurant",
+      "phone": "+918168603435",
+      "whatsapp": "+918168603435",
+      "isVerified": true,
+      "notes": "Madras Cafe"
+    },
+    {
+      "id": "amit-restaurant",
+      "name": "Amit Bhaiya",
+      "category": "Restaurant",
+      "phone": "+919821054507",
+      "whatsapp": "+919821054507",
+      "isVerified": true,
+      "notes": "Namaste India"
+    },
+    {
+      "id": "night-mess",
+      "name": "Night Mess",
+      "category": "Mess",
+      "phone": "+917988799436",
+      "whatsapp": "+917988799436",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sardar-street-food",
+      "name": "Sardar Ji Malai Chaap",
+      "category": "Street Food",
+      "phone": "+919996664987",
+      "whatsapp": "+919996664987",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikrant-street-food",
+      "name": "Vikrant Ande Wala",
+      "category": "Street Food",
+      "phone": "+918529475146",
+      "whatsapp": "+918529475146",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "somveer-coaching",
+      "name": "Somveer PTC",
+      "category": "Coaching",
+      "phone": "+918059556617",
+      "whatsapp": "+918059556617",
+      "isVerified": true,
+      "notes": "PTC"
+    },
+    {
+      "id": "sonu-coaching",
+      "name": "Sonu Bhardwaj",
+      "category": "Coaching",
+      "phone": "+919817391375",
+      "whatsapp": "+919817391375",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "neeru-services",
+      "name": "Neeru Ji Jain",
+      "category": "Services",
+      "phone": "+919050614979",
+      "whatsapp": "+919050614979",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sunil-services",
+      "name": "Sunil",
+      "category": "Services",
+      "phone": "+918168504725",
+      "whatsapp": "+918168504725",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "himanshu-stationary",
+      "name": "Himanshu",
+      "category": "Stationary",
+      "phone": "+919812039707",
+      "whatsapp": "+919812039707",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "red-rose-salon",
+      "name": "Red Rose",
+      "category": "Salon",
+      "phone": "+919416166226",
+      "whatsapp": "+919416166226",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "prachi-nails",
+      "name": "Prachi",
+      "category": "Nails",
+      "phone": "+919350631244",
+      "whatsapp": "+919350631244",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "parlour-salon",
+      "name": "Parlour",
+      "category": "Salon",
+      "phone": "+918397850222",
+      "whatsapp": "+918397850222",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "hair-club-hair",
+      "name": "Hair Club",
+      "category": "Hair",
+      "phone": "+919050765405",
+      "whatsapp": "+919050765405",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "hair-club-2-hair",
+      "name": "Hair Club 2",
+      "category": "Hair",
+      "phone": "+918930167282",
+      "whatsapp": "+918930167282",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vaishnavi-pharmacy",
+      "name": "Vaishnavi Medical",
+      "category": "Pharmacy",
+      "phone": "+919653534141",
+      "whatsapp": "+919653534141",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "imedicart-pharmacy",
+      "name": "iMediCart",
+      "category": "Online Pharmacy",
+      "phone": "+917988453204",
+      "whatsapp": "+917988453204",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "neeraj-pharmacy",
+      "name": "Neeraj",
+      "category": "Pharmacy",
+      "phone": "+918168092660",
+      "whatsapp": "+918168092660",
+      "isVerified": true,
+      "notes": "PTC Pharmacy"
+    },
+    {
+      "id": "pharmacy-1",
+      "name": "Pharmacy 1",
+      "category": "Pharmacy",
+      "phone": "+919034632523",
+      "whatsapp": "+919034632523",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "pharmacy-2",
+      "name": "Pharmacy 2",
+      "category": "Pharmacy",
+      "phone": "+919896767171",
+      "whatsapp": "+919896767171",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "india-post",
+      "name": "India Post",
+      "category": "Parcel",
+      "phone": "+919813242261",
+      "whatsapp": "+919813242261",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikas-sen-courier",
+      "name": "Vikas Sen",
+      "category": "Parcel",
+      "phone": "+919992285069",
+      "whatsapp": "+919992285069",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "dr-barnita-doctor",
+      "name": "Dr Barnita Gupta",
+      "category": "Doctor",
+      "phone": "+919466662905",
+      "whatsapp": "+919466662905",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "dr-rathee-doctor",
+      "name": "Dr Rathee",
+      "category": "Doctor",
+      "phone": "+918708030256",
+      "whatsapp": "+918708030256",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "gupta-dental-1",
+      "name": "Gupta Dental Clinic",
+      "category": "Dental",
+      "phone": "+919050247321",
+      "whatsapp": "+919050247321",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "gupta-dental-2",
+      "name": "Gupta Dental Clinic 2",
+      "category": "Dental",
+      "phone": "+919654363795",
+      "whatsapp": "+919654363795",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "holy-heart-hospital",
+      "name": "Holy Heart",
+      "category": "Hospital",
+      "phone": "+919306722176",
+      "whatsapp": "+919306722176",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "life-care-hospital",
+      "name": "Life Care",
+      "category": "Hospital",
+      "phone": "+919254392542",
+      "whatsapp": "+919254392542",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "ambulance-iim",
+      "name": "Ambulance IIM Rohtak",
+      "category": "Ambulance",
+      "phone": "+918420074005",
+      "whatsapp": "+918420074005",
+      "isVerified": true,
+      "notes": "Campus ambulance"
+    },
+    {
+      "id": "sandeep-repair",
+      "name": "Sandeep",
+      "category": "Electronics",
+      "phone": "+919050040474",
+      "whatsapp": "+919050040474",
+      "isVerified": true,
+      "notes": "Laptop & Mobile"
+    },
+    {
+      "id": "jio-sim",
+      "name": "Jio Sim",
+      "category": "SIM/Network",
+      "phone": "+918307881988",
+      "whatsapp": "+918307881988",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "ashwani-laptop",
+      "name": "Ashwani Dell",
+      "category": "Laptop",
+      "phone": "+919034765079",
+      "whatsapp": "+919034765079",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "harjeet-mobile-1",
+      "name": "Harjeet",
+      "category": "Mobile",
+      "phone": "+919996935375",
+      "whatsapp": "+919996935375",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "harjeet-mobile-2",
+      "name": "Harjeet 2",
+      "category": "Mobile",
+      "phone": "+918168936380",
+      "whatsapp": "+918168936380",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikas-flowers",
+      "name": "Vikas",
+      "category": "Flowers",
+      "phone": "+918950978191",
+      "whatsapp": "+918950978191",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "fnp-flowers",
+      "name": "FNP",
+      "category": "Flowers",
+      "phone": "+918920834602",
+      "whatsapp": "+918920834602",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "lokesh-laundry",
+      "name": "Lokesh",
+      "category": "Laundry",
+      "phone": "+919034663026",
+      "whatsapp": "+919034663026",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "deepak-laundry",
+      "name": "Deepak",
+      "category": "Laundry",
+      "phone": "+917217835828",
+      "whatsapp": "+917217835828",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "tumbledry-laundry",
+      "name": "Tumbledry",
+      "category": "Laundry",
+      "phone": "+918750224996",
+      "whatsapp": "+918750224996",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "laundry-general",
+      "name": "Laundry",
+      "category": "Laundry",
+      "phone": "+918950987922",
+      "whatsapp": "+918950987922",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "harish-legal",
+      "name": "Harish",
+      "category": "Legal",
+      "phone": "+918059464171",
+      "whatsapp": "+918059464171",
+      "isVerified": true,
+      "notes": "Stamp Paper / Affidavit"
+    }
+  ],
+  "drivers": [
+    {
+      "id": "manav-cab",
+      "name": "Manav",
+      "type": "Cab",
+      "phone": "+918295009528",
+      "whatsapp": "+918295009528",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "rupesh-cab",
+      "name": "Rupesh",
+      "type": "Cab",
+      "phone": "+918685018042",
+      "whatsapp": "+918685018042",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "rohit-cab",
+      "name": "Rohit Sharma",
+      "type": "Cab",
+      "phone": "+918571914068",
+      "whatsapp": "+818571914068",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "harsh-cab",
+      "name": "Harsh Arora",
+      "type": "Cab",
+      "phone": "+919896841624",
+      "whatsapp": "+919896841624",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "vikram-cab",
+      "name": "Vikram",
+      "type": "Cab",
+      "phone": "+918307676461",
+      "whatsapp": "+918307676461",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "vicky-cab",
+      "name": "Vicky",
+      "type": "Cab",
+      "phone": "+919813587969",
+      "whatsapp": "+919813587969",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "moni-cab",
+      "name": "Moni",
+      "type": "Cab",
+      "phone": "+918607090200",
+      "whatsapp": "+918607090200",
+      "isVerified": true,
+      "notes": "Intercity"
+    },
+    {
+      "id": "ravinder-cab",
+      "name": "Ravinder",
+      "type": "Cab",
+      "phone": "+917011780069",
+      "whatsapp": "+917011780069",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "gaurav-cab",
+      "name": "Gaurav",
+      "type": "Cab",
+      "phone": "+919306145895",
+      "whatsapp": "+919306145895",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "kaka-bus",
+      "name": "Kaka Bus Service",
+      "type": "Bus",
+      "phone": "+916364003511",
+      "whatsapp": "+916364003511",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sonbir-cab",
+      "name": "Sonbir",
+      "type": "Cab",
+      "phone": "+919991360850",
+      "whatsapp": "+919991360850",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "nitu-cab",
+      "name": "Nitu",
+      "type": "Cab",
+      "phone": "+918708524396",
+      "whatsapp": "+918708524396",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "deepak-bus",
+      "name": "Deepak Bus Service",
+      "type": "Bus",
+      "phone": "+919896387063",
+      "whatsapp": "+919896387063",
+      "isVerified": true,
+      "notes": "IIMR Bus"
+    },
+    {
+      "id": "veer-bus",
+      "name": "Veer Bus Service",
+      "type": "Bus",
+      "phone": "+917900003360",
+      "whatsapp": "+917900003360",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sunil-auto",
+      "name": "Sunil",
+      "type": "Auto",
+      "phone": "+918059758898",
+      "whatsapp": "+918059758898",
+      "isVerified": true,
+      "notes": "Local"
+    },
+    {
+      "id": "vicky-auto",
+      "name": "Vicky Sharma",
+      "type": "Auto",
+      "phone": "+919588189013",
+      "whatsapp": "+919588189013",
+      "isVerified": true,
+      "notes": "Local"
+    },
+    {
+      "id": "shanvi-auto",
+      "name": "Shanvibudwar Shanu",
+      "type": "Auto",
+      "phone": "+917404343408",
+      "whatsapp": "+917404343408",
+      "isVerified": true,
+      "notes": "Local"
+    },
+    {
+      "id": "deepak-auto",
+      "name": "Deepak B",
+      "type": "Auto",
+      "phone": "+918529258517",
+      "whatsapp": "+918529258517",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "jasvir-auto",
+      "name": "Jasvir",
+      "type": "Auto",
+      "phone": "+919034575507",
+      "whatsapp": "+919034575507",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "shyam-auto",
+      "name": "Shyam",
+      "type": "Auto",
+      "phone": "+919996141121",
+      "whatsapp": "+919996141121",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "banty-auto",
+      "name": "Banty Bhai",
+      "type": "Auto",
+      "phone": "+918950867898",
+      "whatsapp": "+918950867898",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "raju-auto",
+      "name": "Raju Kumar",
+      "type": "Auto",
+      "phone": "+919050426455",
+      "whatsapp": "+919050426455",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vishal-auto",
+      "name": "Vishal Khundia",
+      "type": "Auto",
+      "phone": "+917206320720",
+      "whatsapp": "+917206320720",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikash-auto",
+      "name": "Vikash Kumar",
+      "type": "Auto",
+      "phone": "+917717505133",
+      "whatsapp": "+917717505133",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sunil-auto-2",
+      "name": "Sunil Kumar",
+      "type": "Auto",
+      "phone": "+919992252735",
+      "whatsapp": "+919992252735",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "dev-auto",
+      "name": "Dev Budhwar",
+      "type": "Auto",
+      "phone": "+918950008079",
+      "whatsapp": "+918950008079",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "deepak-auto-2",
+      "name": "Deepak Auto",
+      "type": "Auto",
+      "phone": "+919728915160",
+      "whatsapp": "+919728915160",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vijay-auto",
+      "name": "Vijay",
+      "type": "Auto",
+      "phone": "+917496821239",
+      "whatsapp": "+917496821239",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "vikas-auto",
+      "name": "Vikas (Auto)",
+      "type": "Auto",
+      "phone": "+919428219690",
+      "whatsapp": "+919428219690",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "ramesh-auto",
+      "name": "Ramesh",
+      "type": "Auto",
+      "phone": "+917355080850",
+      "whatsapp": "+917355080850",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "bhupinder-auto",
+      "name": "Bhupinder",
+      "type": "Auto",
+      "phone": "+919667091954",
+      "whatsapp": "+919667091954",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sunil-auto-3",
+      "name": "Sunil (Auto 2)",
+      "type": "Auto",
+      "phone": "+918003983731",
+      "whatsapp": "+818003983731",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "ajay-auto",
+      "name": "Ajay",
+      "type": "Auto",
+      "phone": "+917827100721",
+      "whatsapp": "+917827100721",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sanju-auto",
+      "name": "Sanju",
+      "type": "Auto",
+      "phone": "+919302605251",
+      "whatsapp": "+919302605251",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "pinkesh-auto",
+      "name": "Pinkesh",
+      "type": "Auto",
+      "phone": "+918408973973",
+      "whatsapp": "+918408973973",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "ajay-taxi",
+      "name": "Ajay Bhaiya Taxi",
+      "type": "Taxi",
+      "phone": "+919728439001",
+      "whatsapp": "+919728439001",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "iimr-bus",
+      "name": "IIMR Bus",
+      "type": "Bus",
+      "phone": "+919896387063",
+      "whatsapp": "+919896387063",
+      "isVerified": true,
+      "notes": "Campus bus"
+    },
+    {
+      "id": "sandeep-bus",
+      "name": "Sandeep",
+      "type": "Bus",
+      "phone": "+818059995591",
+      "whatsapp": "+818059995591",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "sonu-bus",
+      "name": "Sonu",
+      "type": "Bus",
+      "phone": "+919812012089",
+      "whatsapp": "+919812012089",
+      "isVerified": true,
+      "notes": ""
+    },
+    {
+      "id": "veeru-bus",
+      "name": "Veeru Bhai",
+      "type": "Bus",
+      "phone": "+917900003360",
+      "whatsapp": "+917900003360",
+      "isVerified": true,
+      "notes": ""
+    }
+  ]
+}

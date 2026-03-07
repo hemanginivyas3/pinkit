@@ -3,24 +3,30 @@ import db from "../firebase/firestore";
 
 const dataService = {
   async fetchData(force = false) {
-    try {
-      let vendors = [];
-      let drivers = [];
+    let vendors = [];
+    let drivers = [];
 
-      // FETCH FROM LOCAL STATIC CONTACTS FILE
-      console.log("📂 Loading contacts from static file...");
-      const response = await fetch("/contacts.json");
+    // FETCH FROM LOCAL STATIC CONTACTS FILE
+    try {
+      console.log("Loading contacts from static file...");
+      // Use Vite base URL so this works in both root and subpath deployments.
+      const contactsUrl = `${import.meta.env.BASE_URL}contacts.json`;
+      const response = await fetch(contactsUrl);
       const contactData = await response.json();
-      
+
       if (contactData && contactData.vendors && contactData.drivers) {
-        console.log(`✅ Loaded ${contactData.vendors.length} vendors and ${contactData.drivers.length} drivers from contacts.json`);
+        console.log(`Loaded ${contactData.vendors.length} vendors and ${contactData.drivers.length} drivers from contacts.json`);
         vendors = contactData.vendors || [];
         drivers = contactData.drivers || [];
       } else {
-        console.warn("⚠️ Could not load contacts from file");
+        console.warn("Could not load contacts from file");
       }
-      
-      // Fetch Firebase data (community posts, complaints, etc.)
+    } catch (error) {
+      console.error("Error loading contacts.json:", error);
+    }
+
+    // Fetch Firebase data (community posts, complaints, etc.)
+    try {
       const vendorsSnapshot = await getDocs(collection(db, "vendors"));
       const driversSnapshot = await getDocs(collection(db, "drivers"));
       const communityPostsSnapshot = await getDocs(collection(db, "communityPosts"));
@@ -55,18 +61,18 @@ const dataService = {
         })),
       };
     } catch (error) {
-      console.error("Error fetching data:", error);
-      // Return empty arrays if file fetch fails
+      console.error("Error fetching Firebase data:", error);
+      // Keep local contacts visible even if Firebase fails.
       return {
-        vendors: [],
-        drivers: [],
+        vendors,
+        drivers,
         communityPosts: [],
         routeFares: [],
         essentialServices: [],
       };
     }
   },
-  
+
   async postCommunityPost(data: any) {
     try {
       await addDoc(collection(db, "communityPosts"), {
@@ -116,7 +122,7 @@ const dataService = {
         whatsapp: data.phone,
         description: data.description,
         isVerified: false,
-        image: '',
+        image: "",
         addedBy: data.userName,
         createdAt: new Date().toISOString(),
       });
