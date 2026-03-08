@@ -105,8 +105,6 @@ export interface CommunityPost {
   userName: string;
   request: string;
   message?: string;
-  imageData?: string;
-  imageName?: string;
   time: string;
   type: 'Ride' | 'Order' | 'Open' | 'Help' | 'Review' | 'Suggestion';
   contact: string;
@@ -121,6 +119,7 @@ export interface OrderLog {
   date: string;
   status: string;
 }
+
 
 
 

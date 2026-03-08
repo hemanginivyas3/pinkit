@@ -138,19 +138,6 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
   const [place, setPlace] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [message, setMessage] = useState('');
-  const [imageData, setImageData] = useState('');
-  const [imageName, setImageName] = useState('');
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageData(typeof reader.result === 'string' ? reader.result : '');
-      setImageName(file.name);
-    };
-    reader.readAsDataURL(file);
-  };
   if (!isOpen) return null;
 
   return (
@@ -257,23 +244,6 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
           />
         </div>
 
-        {type !== 'Open' && (
-          <div className="mb-6">
-            <label className="text-[10px] font-black text-slate-500 uppercase mb-2 block ml-4 tracking-widest">Add Image (optional)</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full bg-slate-50 rounded-[24px] p-3 text-xs font-semibold border border-slate-200"
-            />
-            {imageData && (
-              <div className="mt-3 bg-slate-50 border border-slate-200 rounded-2xl p-3">
-                <img src={imageData} alt="Post preview" className="w-full max-h-40 object-cover rounded-xl" />
-                <p className="text-[10px] text-slate-500 mt-2 truncate">{imageName}</p>
-              </div>
-            )}
-          </div>
-        )}
 
         <label className="flex items-center gap-3 mb-6 bg-slate-50 border border-slate-200 rounded-2xl p-3 cursor-pointer">
           <input
@@ -296,7 +266,7 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
           </button>
           <button 
             onClick={() => {
-              onSubmit(type, type === 'Ride' ? { dest, time, message, anonymous, imageData, imageName } : type === 'Order' ? { place, time, message, anonymous, imageData, imageName } : { message, anonymous });
+              onSubmit(type, type === 'Ride' ? { dest, time, message, anonymous } : type === 'Order' ? { place, time, message, anonymous } : { message, anonymous });
               onClose();
             }}
             className={`flex-1 py-5 text-white font-black rounded-[24px] shadow-2xl uppercase tracking-widest text-xs ${type === 'Ride' ? 'bg-pink-primary shadow-pink-primary/30' : type === 'Order' ? 'bg-teal-primary shadow-teal-primary/30' : 'bg-slate-900 shadow-slate-900/30'}`}
@@ -430,7 +400,7 @@ const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, use
           <h1 className="text-2xl font-bold tracking-tight text-pink-primary">
             {title === 'PinkIt' ? '🎓 PinkIt' : title}
           </h1>
-          <p className="text-[9px] font-semibold text-pink-primary/60 uppercase tracking-wide">Campus Legends Only</p>
+          <p className="text-[9px] font-semibold text-pink-primary/60 uppercase tracking-wide">Made for the Kathors.</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -546,6 +516,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string, passw
             />
           </div>
         )}
+
         <div className="relative">
           <label className="text-[9px] font-semibold text-pink-primary uppercase mb-2 block ml-4 tracking-wide">Campus Email</label>
           <input
@@ -833,6 +804,34 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
+
+  const addToContacts = (name: string, phone: string) => {
+    const cleanName = (name || 'Contact').trim();
+    const cleanPhone = (phone || '').trim();
+    if (!cleanPhone) {
+      alert('Phone number is missing for this contact.');
+      return;
+    }
+
+    const safeFileName = cleanName.replace(/[^a-z0-9_-]/gi, '_') || 'contact';
+    const vcf = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${cleanName}`,
+      `TEL;TYPE=CELL:${cleanPhone}`,
+      'END:VCARD'
+    ].join('\n');
+
+    const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${safeFileName}.vcf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
   const getEmoji = (cat: string) => {
     switch (cat) {
       case 'Grocery': return '🛒';
@@ -908,12 +907,14 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             <button onClick={onRefer} className="text-pink-primary font-black uppercase text-xs tracking-widest underline hover:text-pink-hot">+ Add a contact</button>
           </div>
         )}
+
         {filteredVendors.length === 0 && !selectedCategory && (
           <div className="col-span-full text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">🔍 No results</p>
             <p className="text-slate-400 font-bold text-sm">Try a different search or select a category above</p>
           </div>
         )}
+
         {filteredVendors.map((v) => (
           <motion.div 
             key={v.id} 
@@ -978,8 +979,8 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             </div>
             
             <div className="relative z-10">
-              <button className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                Save
+              <button onClick={() => addToContacts(v.name, v.phone)} className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                Add to Contacts
               </button>
             </div>
           </motion.div>
@@ -1047,8 +1048,8 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             </div>
             
             <div className="relative z-10">
-              <button className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                Save
+              <button onClick={() => addToContacts(d.name, d.phone)} className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+                Add to Contacts
               </button>
             </div>
           </motion.div>
@@ -1932,8 +1933,6 @@ export default function App() {
         userName: details.anonymous ? 'Anonymous' : user.name,
         request,
         message: type === 'Open' ? '' : cleanedMessage,
-        imageData: details.imageData || '',
-        imageName: details.imageName || '',
         time: 'Just now',
         type,
         contact: details.anonymous ? '' : user.email,
@@ -2304,6 +2303,12 @@ case 'admin':
     </div>
   );
 }
+
+
+
+
+
+
 
 
 
