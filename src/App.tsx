@@ -804,49 +804,6 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
-
-  const addToContacts = async (name: string, phone: string) => {
-    const cleanName = (name || 'Contact').trim();
-    const cleanPhone = (phone || '').trim();
-    if (!cleanPhone) {
-      alert('Phone number is missing for this contact.');
-      return;
-    }
-
-    const safeFileName = cleanName.replace(/[^a-z0-9_-]/gi, '_') || 'contact';
-    const vcf = [
-      'BEGIN:VCARD',
-      'VERSION:3.0',
-      `FN:${cleanName}`,
-      `TEL;TYPE=CELL:${cleanPhone}`,
-      'END:VCARD'
-    ].join('\n');
-
-    const file = new File([vcf], `${safeFileName}.vcf`, { type: 'text/vcard;charset=utf-8' });
-
-    try {
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: cleanName,
-          text: `${cleanName} - ${cleanPhone}`
-        });
-        return;
-      }
-    } catch (_) {
-      // User may cancel share sheet; fall through to download fallback.
-    }
-
-    const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${safeFileName}.vcf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
   const getEmoji = (cat: string) => {
     switch (cat) {
       case 'Grocery': return '🛒';
@@ -992,12 +949,6 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                 Chat
               </a>
             </div>
-            
-            <div className="relative z-10">
-              <button onClick={() => void addToContacts(v.name, v.phone)} className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                Add to Contacts
-              </button>
-            </div>
           </motion.div>
         ))}
         {filteredDrivers.map((d) => (
@@ -1060,12 +1011,6 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                 <MessageCircle size={16} />
                 Chat
               </a>
-            </div>
-            
-            <div className="relative z-10">
-              <button onClick={() => void addToContacts(d.name, d.phone)} className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
-                Add to Contacts
-              </button>
             </div>
           </motion.div>
         ))}
@@ -2318,6 +2263,7 @@ case 'admin':
     </div>
   );
 }
+
 
 
 
