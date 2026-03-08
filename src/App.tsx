@@ -805,7 +805,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
 
-  const addToContacts = (name: string, phone: string) => {
+  const addToContacts = async (name: string, phone: string) => {
     const cleanName = (name || 'Contact').trim();
     const cleanPhone = (phone || '').trim();
     if (!cleanPhone) {
@@ -821,6 +821,21 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
       `TEL;TYPE=CELL:${cleanPhone}`,
       'END:VCARD'
     ].join('\n');
+
+    const file = new File([vcf], `${safeFileName}.vcf`, { type: 'text/vcard;charset=utf-8' });
+
+    try {
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: cleanName,
+          text: `${cleanName} - ${cleanPhone}`
+        });
+        return;
+      }
+    } catch (_) {
+      // User may cancel share sheet; fall through to download fallback.
+    }
 
     const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -979,7 +994,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             </div>
             
             <div className="relative z-10">
-              <button onClick={() => addToContacts(v.name, v.phone)} className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+              <button onClick={() => void addToContacts(v.name, v.phone)} className="w-full py-3 text-pink-primary font-black text-xs bg-pink-soft hover:bg-pink-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
                 Add to Contacts
               </button>
             </div>
@@ -1048,7 +1063,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
             </div>
             
             <div className="relative z-10">
-              <button onClick={() => addToContacts(d.name, d.phone)} className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
+              <button onClick={() => void addToContacts(d.name, d.phone)} className="w-full py-3 text-teal-primary font-black text-xs bg-teal-soft hover:bg-teal-primary/10 rounded-[16px] uppercase tracking-widest active:scale-95 transition-all">
                 Add to Contacts
               </button>
             </div>
@@ -2303,6 +2318,8 @@ case 'admin':
     </div>
   );
 }
+
+
 
 
 
