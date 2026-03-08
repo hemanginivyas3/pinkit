@@ -296,7 +296,7 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
           </button>
           <button 
             onClick={() => {
-              onSubmit(type, type === 'Ride' ? { dest, time, message, anonymous, imageData, imageName } : type === 'Order' ? { place, time, message, anonymous, imageData, imageName } : { message, anonymous, imageData, imageName });
+              onSubmit(type, type === 'Ride' ? { dest, time, message, anonymous, imageData, imageName } : type === 'Order' ? { place, time, message, anonymous, imageData, imageName } : { message, anonymous });
               onClose();
             }}
             className={`flex-1 py-5 text-white font-black rounded-[24px] shadow-2xl uppercase tracking-widest text-xs ${type === 'Ride' ? 'bg-pink-primary shadow-pink-primary/30' : type === 'Order' ? 'bg-teal-primary shadow-teal-primary/30' : 'bg-slate-900 shadow-slate-900/30'}`}
@@ -525,7 +525,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string, passw
         transition={{ delay: 0.3 }}
         className="relative z-10 text-pink-soft mb-8 text-center font-semibold drop-shadow-lg"
       >
-        Firebase-auth campus access.
+        Need It? Just PinkIt
       </motion.p>
 
       <motion.div
@@ -2304,6 +2304,10 @@ case 'admin':
     </div>
   );
 }
+
+
+
+
 
 
 
