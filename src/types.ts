@@ -87,7 +87,7 @@ export interface EssentialService {
 export interface RohtakSpot {
   id: string;
   name: string;
-  type: 'Cafe' | 'Arcade' | 'Bowling' | 'Park' | 'Food';
+  type: string;
   description: string;
   image: string;
   location: string;
@@ -104,8 +104,11 @@ export interface CommunityPost {
   id: string;
   userName: string;
   request: string;
+  message?: string;
+  imageData?: string;
+  imageName?: string;
   time: string;
-  type: 'Ride' | 'Order' | 'Help' | 'Review' | 'Suggestion';
+  type: 'Ride' | 'Order' | 'Open' | 'Help' | 'Review' | 'Suggestion';
   contact: string;
   destination?: string;
   departureTime?: string;
@@ -118,3 +121,7 @@ export interface OrderLog {
   date: string;
   status: string;
 }
+
+
+
+

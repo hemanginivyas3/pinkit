@@ -1,5 +1,15 @@
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 import db from "../firebase/firestore";
+
+const safeGetCollection = async (name: string) => {
+  try {
+    const snapshot = await getDocs(collection(db, name));
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (error) {
+    console.error(`Error fetching ${name}:`, error);
+    return [];
+  }
+};
 
 const dataService = {
   async fetchData(force = false) {
@@ -19,135 +29,135 @@ const dataService = {
       console.error("Error loading contacts.json:", error);
     }
 
-    try {
-      const vendorsSnapshot = await getDocs(collection(db, "vendors"));
-      const driversSnapshot = await getDocs(collection(db, "drivers"));
-      const communityPostsSnapshot = await getDocs(collection(db, "communityPosts"));
-      const routeFaresSnapshot = await getDocs(collection(db, "routeFares"));
-      const essentialServicesSnapshot = await getDocs(collection(db, "essentialServices"));
-      const reviewsSnapshot = await getDocs(collection(db, "reviews"));
+    const [
+      fbVendors,
+      fbDrivers,
+      communityPosts,
+      routeFares,
+      essentialServices,
+      reviews,
+    ] = await Promise.all([
+      safeGetCollection("vendors"),
+      safeGetCollection("drivers"),
+      safeGetCollection("communityPosts"),
+      safeGetCollection("routeFares"),
+      safeGetCollection("essentialServices"),
+      safeGetCollection("reviews"),
+    ]);
 
-      const fbVendors = vendorsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const fbDrivers = driversSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const activeVendors = fbVendors.length > 0 ? fbVendors : vendors;
+    const activeDrivers = fbDrivers.length > 0 ? fbDrivers : drivers;
 
-      const activeVendors = fbVendors.length > 0 ? fbVendors : vendors;
-      const activeDrivers = fbDrivers.length > 0 ? fbDrivers : drivers;
+    const reviewStats = new Map<string, { total: number; count: number }>();
+    reviews.forEach((review: any) => {
+      const targetId = review.targetId;
+      const rating = Number(review.rating);
+      if (!targetId || Number.isNaN(rating)) return;
+      const current = reviewStats.get(targetId) || { total: 0, count: 0 };
+      reviewStats.set(targetId, { total: current.total + rating, count: current.count + 1 });
+    });
 
-      const reviewStats = new Map<string, { total: number; count: number }>();
-      reviewsSnapshot.docs.forEach((doc) => {
-        const review = doc.data() as any;
-        const targetId = review.targetId;
-        const rating = Number(review.rating);
-        if (!targetId || Number.isNaN(rating)) return;
-        const current = reviewStats.get(targetId) || { total: 0, count: 0 };
-        reviewStats.set(targetId, {
-          total: current.total + rating,
-          count: current.count + 1,
-        });
+    const withRatings = <T extends { id: string }>(items: T[]) =>
+      items.map((item) => {
+        const stat = reviewStats.get(item.id);
+        if (!stat) return item;
+        return {
+          ...item,
+          rating: Number((stat.total / stat.count).toFixed(1)),
+          reviewCount: stat.count,
+        };
       });
 
-      const withRatings = <T extends { id: string }>(items: T[]) => {
-        return items.map((item) => {
-          const stat = reviewStats.get(item.id);
-          if (!stat) return item;
-          return {
-            ...item,
-            rating: Number((stat.total / stat.count).toFixed(1)),
-            reviewCount: stat.count,
-          };
-        });
-      };
+    const sortedPosts = [...communityPosts].sort((a: any, b: any) => {
+      const aTime = new Date(a.createdAt || a.time || 0).getTime();
+      const bTime = new Date(b.createdAt || b.time || 0).getTime();
+      return bTime - aTime;
+    });
 
-      return {
-        vendors: withRatings(activeVendors),
-        drivers: withRatings(activeDrivers),
-        communityPosts: communityPostsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-        routeFares: routeFaresSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-        essentialServices: essentialServicesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-      };
-    } catch (error) {
-      console.error("Error fetching Firebase data:", error);
-      return {
-        vendors,
-        drivers,
-        communityPosts: [],
-        routeFares: [],
-        essentialServices: [],
-      };
-    }
+    return {
+      vendors: withRatings(activeVendors),
+      drivers: withRatings(activeDrivers),
+      communityPosts: sortedPosts,
+      routeFares,
+      essentialServices,
+    };
   },
 
   async postCommunityPost(data: any) {
-    try {
-      await addDoc(collection(db, "communityPosts"), {
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
-      return true;
-    } catch (err) {
-      console.error("Error posting community post:", err);
-      throw err;
-    }
+    const created = await addDoc(collection(db, "communityPosts"), {
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return created.id;
+  },
+
+  async deleteCommunityPost(postId: string) {
+    await deleteDoc(doc(db, "communityPosts", postId));
   },
 
   async postReview(data: any) {
-    try {
-      await addDoc(collection(db, "reviews"), {
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
-      return true;
-    } catch (err) {
-      console.error("Error posting review:", err);
-      throw err;
-    }
+    await addDoc(collection(db, "reviews"), {
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return true;
   },
 
   async postFeedback(data: any) {
-    try {
-      await addDoc(collection(db, "feedback"), {
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
-      return true;
-    } catch (err) {
-      console.error("Error posting feedback:", err);
-      throw err;
-    }
+    await addDoc(collection(db, "feedback"), {
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return true;
   },
 
   async postComplaint(data: any) {
-    try {
-      await addDoc(collection(db, "complaints"), {
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
-      return true;
-    } catch (err) {
-      console.error("Error posting complaint:", err);
-      throw err;
-    }
+    await addDoc(collection(db, "complaints"), {
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return true;
+  },
+
+  async addVendor(data: any) {
+    const created = await addDoc(collection(db, "vendors"), {
+      name: data.name,
+      category: data.category,
+      phone: data.phone,
+      whatsapp: data.whatsapp || data.phone,
+      description: data.description || "",
+      isVerified: data.isVerified ?? true,
+      image: data.image || "",
+      createdAt: new Date().toISOString(),
+      createdBy: data.userId || "",
+    });
+    return created.id;
+  },
+
+  async addDriver(data: any) {
+    const created = await addDoc(collection(db, "drivers"), {
+      name: data.name,
+      type: data.type,
+      phone: data.phone,
+      whatsapp: data.whatsapp || data.phone,
+      isVerified: data.isVerified ?? true,
+      vehicleNumber: data.vehicleNumber || "",
+      createdAt: new Date().toISOString(),
+      createdBy: data.userId || "",
+    });
+    return created.id;
+  },
+
+  async deleteVendor(vendorId: string) {
+    await deleteDoc(doc(db, "vendors", vendorId));
+  },
+
+  async deleteDriver(driverId: string) {
+    await deleteDoc(doc(db, "drivers", driverId));
   },
 
   async addStudentContact(data: any) {
-    try {
-      const newContact = await addDoc(collection(db, "vendors"), {
-        name: data.name,
-        category: data.category,
-        phone: data.phone,
-        whatsapp: data.phone,
-        description: data.description,
-        isVerified: false,
-        image: "",
-        addedBy: data.userName,
-        addedByUserId: data.userId,
-        createdAt: new Date().toISOString(),
-      });
-      return newContact.id;
-    } catch (err) {
-      console.error("Error adding contact:", err);
-      throw err;
-    }
+    return this.addVendor(data);
   },
 };
 

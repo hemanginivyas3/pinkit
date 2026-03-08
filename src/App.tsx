@@ -45,7 +45,6 @@ const ADMIN_EMAILS = [
   'ipm06sangeethav@iimrohtak.ac.in'
 ];
 
-
 const LOGO_URL = `${import.meta.env.BASE_URL}pinkitlogo.jpeg?v=3`;
 const BANNER_URL = `${import.meta.env.BASE_URL}pinkitbanner.png?v=1`;
 
@@ -75,7 +74,6 @@ const ReviewModal = ({ isOpen, onClose, targetName, onSubmit }: { isOpen: boolea
   const [comment, setComment] = useState('');
 
   if (!isOpen) return null;
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -87,7 +85,7 @@ const ReviewModal = ({ isOpen, onClose, targetName, onSubmit }: { isOpen: boolea
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         exit={{ y: 100 }}
-        className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
+        className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
       >
         <h3 className="text-2xl font-black mb-2">Review {targetName}</h3>
         <p className="text-slate-500 mb-6">Share your experience with the community.</p>
@@ -133,12 +131,26 @@ const ReviewModal = ({ isOpen, onClose, targetName, onSubmit }: { isOpen: boolea
   );
 };
 
-const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: () => void, onSubmit: (type: 'Ride' | 'Order', details: any) => void }) => {
-  const [type, setType] = useState<'Ride' | 'Order'>('Ride');
+const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: () => void, onSubmit: (type: 'Ride' | 'Order' | 'Open', details: any) => void }) => {
+  const [type, setType] = useState<'Ride' | 'Order' | 'Open'>('Ride');
   const [dest, setDest] = useState('');
   const [time, setTime] = useState('');
   const [place, setPlace] = useState('');
+  const [anonymous, setAnonymous] = useState(false);
+  const [message, setMessage] = useState('');
+  const [imageData, setImageData] = useState('');
+  const [imageName, setImageName] = useState('');
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageData(typeof reader.result === 'string' ? reader.result : '');
+      setImageName(file.name);
+    };
+    reader.readAsDataURL(file);
+  };
   if (!isOpen) return null;
 
   return (
@@ -152,28 +164,33 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         exit={{ y: 100 }}
-        className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
+        className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
       >
         <div className="flex gap-2 mb-8 bg-pink-soft p-2 rounded-2xl">
           <button 
             onClick={() => setType('Ride')}
             className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${type === 'Ride' ? 'bg-pink-primary text-white shadow-lg' : 'text-pink-primary'}`}
           >
-            🛵 Ride Pool
+            Ride Pool
           </button>
           <button 
             onClick={() => setType('Order')}
             className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${type === 'Order' ? 'bg-teal-primary text-white shadow-lg' : 'text-teal-primary'}`}
           >
-            🍕 Order Pool
+            Order Pool
+          </button>
+          <button 
+            onClick={() => setType('Open')}
+            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${type === 'Open' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600'}`}
+          >
+            Open Post
           </button>
         </div>
-
         <h3 className="text-3xl font-black mb-2 italic tracking-tighter text-slate-900">
-          {type === 'Ride' ? '🛵 Split a Ride?' : '🍕 Pool an Order?'}
+          {type === 'Ride' ? 'Ride Pool' : type === 'Order' ? 'Order Pool' : 'Open Community Post'}
         </h3>
         <p className="text-slate-500 mb-8 font-bold">
-          {type === 'Ride' ? 'Find legends to split the fare with.' : 'Save on delivery fees with the community.'}
+          {type === 'Ride' ? 'Find legends to split the fare with.' : type === 'Order' ? 'Save on delivery fees with the community.' : 'Share anything with the campus community.'}
         </p>
         
         <div className="flex flex-col gap-6 mb-10">
@@ -200,7 +217,7 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
                 />
               </div>
             </>
-          ) : (
+          ) : type === 'Order' ? (
             <>
               <div>
                 <label className="text-[10px] font-black text-teal-primary uppercase mb-2 block ml-4 tracking-widest">Ordering From</label>
@@ -223,8 +240,52 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
                 />
               </div>
             </>
-          )}
+          ) : (
+            <div className='bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold text-slate-600'>
+              Write any open-ended community update, question, request, or announcement.
+            </div>
+          )}        </div>
+
+        <div className="mb-6">
+          <label className="text-[10px] font-black text-slate-500 uppercase mb-2 block ml-4 tracking-widest">Message</label>
+          <textarea
+            placeholder="Add context, pickup point, or any details for others"
+            className="w-full bg-slate-50 rounded-[24px] p-4 text-sm font-bold focus:outline-none border-2 border-transparent focus:border-pink-primary/20 shadow-sm"
+            rows={3}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
         </div>
+
+        {type !== 'Open' && (
+          <div className="mb-6">
+            <label className="text-[10px] font-black text-slate-500 uppercase mb-2 block ml-4 tracking-widest">Add Image (optional)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full bg-slate-50 rounded-[24px] p-3 text-xs font-semibold border border-slate-200"
+            />
+            {imageData && (
+              <div className="mt-3 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                <img src={imageData} alt="Post preview" className="w-full max-h-40 object-cover rounded-xl" />
+                <p className="text-[10px] text-slate-500 mt-2 truncate">{imageName}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        <label className="flex items-center gap-3 mb-6 bg-slate-50 border border-slate-200 rounded-2xl p-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={anonymous}
+            onChange={(e) => setAnonymous(e.target.checked)}
+            className="accent-pink-primary w-4 h-4"
+          />
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+            Post anonymously
+          </span>
+        </label>
 
         <div className="flex gap-4">
           <button 
@@ -235,10 +296,10 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
           </button>
           <button 
             onClick={() => {
-              onSubmit(type, type === 'Ride' ? { dest, time } : { place, time });
+              onSubmit(type, type === 'Ride' ? { dest, time, message, anonymous, imageData, imageName } : type === 'Order' ? { place, time, message, anonymous, imageData, imageName } : { message, anonymous, imageData, imageName });
               onClose();
             }}
-            className={`flex-1 py-5 text-white font-black rounded-[24px] shadow-2xl uppercase tracking-widest text-xs ${type === 'Ride' ? 'bg-pink-primary shadow-pink-primary/30' : 'bg-teal-primary shadow-teal-primary/30'}`}
+            className={`flex-1 py-5 text-white font-black rounded-[24px] shadow-2xl uppercase tracking-widest text-xs ${type === 'Ride' ? 'bg-pink-primary shadow-pink-primary/30' : type === 'Order' ? 'bg-teal-primary shadow-teal-primary/30' : 'bg-slate-900 shadow-slate-900/30'}`}
           >
             Post Request 📝
           </button>
@@ -250,14 +311,14 @@ const PostCommunityModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, on
 
 const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTab: string, setActiveTab: (tab: string) => void, onBackClick?: () => void, isAdmin?: boolean }) => {
   const baseTabs = [
-    { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
-    { id: 'categories', label: 'Categories', icon: LayoutGrid, emoji: '🛍️' },
-    { id: 'feed', label: 'Posts/Feed', icon: Users, emoji: '📱' },
-    { id: 'forum', label: 'Forum', icon: MessageSquare, emoji: '💬' },
-    { id: 'account', label: 'Account', icon: User, emoji: '👤' },
+    { id: 'home', label: 'Home', icon: HomeIcon },
+    { id: 'categories', label: 'Categories', icon: LayoutGrid },
+    { id: 'spots', label: 'Spots', icon: MapPin },
+    { id: 'feed', label: 'Community', icon: Users },
+    { id: 'account', label: 'Account', icon: User },
   ];
 
-  const adminTab = { id: 'admin', label: 'Admin', icon: Shield, emoji: '🛡️' };
+  const adminTab = { id: 'admin', label: 'Admin', icon: Shield };
   const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
@@ -281,13 +342,9 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
               animate={isActive ? { y: -8, scale: 1.2 } : { y: 0, scale: 1 }}
               className="relative"
             >
-              {isActive ? (
-                <span className="text-2xl">{tab.emoji}</span>
-              ) : (
-                <tab.icon size={22} strokeWidth={2} />
-              )}
+              <tab.icon size={22} strokeWidth={isActive ? 2.6 : 2} />
               {isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="nav-glow"
                   className="absolute -inset-2 bg-pink-primary/10 rounded-full blur-md -z-10"
                 />
@@ -304,23 +361,22 @@ const BottomNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTa
 
 const SidebarNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeTab: string, setActiveTab: (tab: string) => void, onBackClick?: () => void, isAdmin?: boolean }) => {
   const baseTabs = [
-    { id: 'home', label: 'Home', icon: HomeIcon, emoji: '🏠' },
-    { id: 'categories', label: 'Categories', icon: LayoutGrid, emoji: '🛍️' },
-    { id: 'feed', label: 'Posts/Feed', icon: Users, emoji: '📱' },
-    { id: 'forum', label: 'Forum', icon: MessageSquare, emoji: '💬' },
-    { id: 'account', label: 'Account', icon: User, emoji: '👤' },
+    { id: 'home', label: 'Home', icon: HomeIcon },
+    { id: 'categories', label: 'Categories', icon: LayoutGrid },
+    { id: 'spots', label: 'Spots', icon: MapPin },
+    { id: 'feed', label: 'Community', icon: Users },
+    { id: 'account', label: 'Account', icon: User },
   ];
-
-  const adminTab = { id: 'admin', label: 'Admin', icon: Shield, emoji: '🛡️' };
+  const adminTab = { id: 'admin', label: 'Admin', icon: Shield };
   const tabs = isAdmin ? [...baseTabs.slice(0, -1), adminTab, baseTabs[baseTabs.length - 1]] : baseTabs;
 
   return (
     <nav className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:bg-gradient-to-b md:from-pink-primary md:to-pink-600 md:flex md:flex-col md:p-6 md:gap-4 md:z-50 md:shadow-lg md:overflow-y-auto">
       <div className="mb-8">
         <div className="w-14 h-14 bg-white/20 rounded-[20px] flex items-center justify-center shadow-lg shadow-pink-primary/20 overflow-hidden border border-white/40">
-          <img 
-            src={LOGO_URL} 
-            alt="PinkIt Logo" 
+          <img
+            src={LOGO_URL}
+            alt="PinkIt Logo"
             className="w-full h-full object-cover object-center"
             referrerPolicy="no-referrer"
           />
@@ -340,12 +396,12 @@ const SidebarNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeT
                 if (tab.id !== 'categories') onBackClick?.();
               }}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                isActive 
-                  ? 'bg-white text-pink-primary shadow-lg' 
+                isActive
+                  ? 'bg-white text-pink-primary shadow-lg'
                   : 'text-white hover:bg-white/10'
               }`}
             >
-              <span className="text-xl">{tab.emoji}</span>
+              <tab.icon size={20} strokeWidth={2.2} />
               <span className="font-semibold text-sm">{tab.label}</span>
             </button>
           );
@@ -353,12 +409,11 @@ const SidebarNav = ({ activeTab, setActiveTab, onBackClick, isAdmin }: { activeT
       </div>
 
       <div className="text-center text-pink-100 text-xs font-semibold opacity-60 py-2">
-        © 2026 PinkIt
+        � 2026 PinkIt
       </div>
     </nav>
   );
 };
-
 const Header = ({ title, showSearch = false, onSearch, onRefresh, isLoading, user }: { title: string, showSearch?: boolean, onSearch?: (query: string) => void, onRefresh?: () => void, isLoading?: boolean, user?: { name: string } }) => (
   <header className="sticky top-0 bg-gradient-to-r from-pink-soft via-pink-50 to-pink-soft/80 backdrop-blur-xl z-40 px-6 py-6 flex flex-col gap-6 border-b-2 border-pink-primary/20">
     <div className="flex justify-between items-center">
@@ -538,7 +593,7 @@ const LoginScreen = ({ onLogin }: { onLogin: (name: string, email: string, passw
   );
 };
 
-const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat: Category) => void, vendors: Vendor[], drivers: Driver[] }) => {
+const HomePage = ({ onCategoryClick, onViewSpots, vendors, drivers }: { onCategoryClick: (cat: Category) => void, onViewSpots: () => void, vendors: Vendor[], drivers: Driver[] }) => {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const quotes = [
     "10 km away. 1 tap closer. 🚀",
@@ -548,7 +603,6 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
     "Don't walk. PinkIt. 🛵",
     "Your campus, your rules. 🤝"
   ];
-
   useEffect(() => {
     const interval = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % quotes.length);
@@ -566,13 +620,12 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
     { name: 'Pharmacy', icon: '💊', color: 'bg-pink-soft text-pink-primary' },
     { name: 'More', icon: '➕', color: 'bg-slate-100 text-slate-400' },
   ];
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="px-6 pb-24"
+      className="px-4 sm:px-6 lg:px-10 pb-24 md:pb-10 max-w-[1400px] mx-auto"
     >
       {/* Banner */}
       <div className="relative w-full aspect-[1795/511] rounded-[40px] overflow-hidden mb-10 shadow-2xl shadow-pink-primary/20 group">
@@ -604,7 +657,7 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
 
       {/* Category Grid */}
       <h2 className="text-2xl font-bold mb-6 text-pink-primary">⚡ Quick Fixes</h2>
-      <div className="grid grid-cols-4 gap-3 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-10">
         {categories.map((cat) => (
           <motion.button 
             key={cat.name}
@@ -624,33 +677,53 @@ const HomePage = ({ onCategoryClick, vendors, drivers }: { onCategoryClick: (cat
           </motion.button>
         ))}
       </div>
-
-      {/* Rohtak Spots Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-pink-primary">Popular Spots ✨</h2>
-          <span className="text-[9px] font-semibold bg-pink-primary text-white px-2 py-1 rounded-full uppercase">Top Picks</span>
+      {/* Popular Spots Shortcut */}
+      <div className="mb-8 bg-white rounded-[32px] p-6 border border-pink-100 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-pink-primary">Popular Spots</h2>
+          <p className="text-sm text-slate-500">Explore all hangout spots on a dedicated page.</p>
         </div>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-          {ROHTAK_SPOTS.map((spot) => (
-            <div key={spot.id} className="min-w-[260px] bg-white rounded-[32px] overflow-hidden shadow-sm border border-pink-100 p-6">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="font-semibold text-lg leading-tight">{spot.name}</h3>
-                <span className="text-[9px] font-semibold bg-teal-soft text-teal-primary px-2 py-1 rounded-lg uppercase">{spot.type}</span>
-              </div>
-              <p className="text-xs text-slate-500 mb-4 line-clamp-2">{spot.description}</p>
-              <div className="flex items-center gap-2 text-[9px] font-semibold text-pink-primary bg-pink-soft w-fit px-3 py-1 rounded-full">
-                <MapPin size={10} />
-                {spot.location}
-              </div>
-            </div>
-          ))}
-        </div>
+        <button
+          onClick={onViewSpots}
+          className="px-5 py-3 bg-pink-primary text-white font-semibold rounded-2xl hover:brightness-110"
+        >
+          View Popular Spots
+        </button>
       </div>
     </motion.div>
   );
 };
 
+const PopularSpotsPage = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="px-4 sm:px-6 lg:px-10 pb-24 md:pb-10 max-w-[1400px] mx-auto"
+    >
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-pink-primary">Popular Spots</h2>
+        <span className="text-[10px] font-semibold bg-pink-primary text-white px-3 py-1 rounded-full uppercase tracking-wide">Rohtak</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {ROHTAK_SPOTS.map((spot) => (
+          <div key={spot.id} className="bg-white rounded-[28px] border border-pink-100 shadow-sm p-5">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">{spot.name}</h3>
+              <span className="text-[10px] font-semibold bg-teal-soft text-teal-primary px-2 py-1 rounded-lg uppercase">{spot.type}</span>
+            </div>
+            <p className="text-sm text-slate-600 mb-4">{spot.description}</p>
+            <div className="flex items-center gap-2 text-[11px] font-semibold text-pink-primary bg-pink-soft px-3 py-2 rounded-full w-fit">
+              <MapPin size={13} />
+              {spot.location}
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: () => void, onSubmit: (data: any) => void }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState<Category>('Grocery');
@@ -662,7 +735,6 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -674,7 +746,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         exit={{ y: 100 }}
-        className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
+        className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
       >
         <h3 className="text-3xl font-black mb-2 italic tracking-tighter">💡 Suggest a Service</h3>
         <p className="text-slate-500 mb-8 font-bold">Help the community grow by adding a trusted contact.</p>
@@ -724,8 +796,8 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-          </div>
-        </div>
+          </div>        </div>
+
 
         <div className="flex gap-4">
           <button 
@@ -749,7 +821,7 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   );
 };
 
-const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver, rating?: number) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void }) => {
+const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide, ratingInFlight }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver, rating?: number) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void, ratingInFlight: string | null }) => {
   const filteredVendors = selectedCategory 
     ? vendors.filter(v => v.category === selectedCategory)
     : vendors;
@@ -761,7 +833,6 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
-
   const getEmoji = (cat: string) => {
     switch (cat) {
       case 'Grocery': return '🛒';
@@ -872,10 +943,11 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                     <button
                       key={`vendor-rate-${v.id}-${star}`}
                       onClick={() => onReview(v, star)}
-                      className="p-1 rounded-md bg-yellow-50 hover:bg-yellow-100 active:scale-90 transition-all"
+                      disabled={ratingInFlight === v.id}
+                      className={`p-1 rounded-md transition-all ${ratingInFlight === v.id ? 'bg-slate-100 opacity-60 cursor-not-allowed' : 'bg-yellow-50 hover:bg-yellow-100 active:scale-90'}`}
                       title={`Rate ${star} star${star > 1 ? 's' : ''}`}
                     >
-                      <Star size={14} className="text-yellow-500" />
+                      <Star size={14} className={`text-yellow-500 ${typeof v.rating === 'number' && Math.round(v.rating) >= star ? 'fill-yellow-500' : ''}`} />
                     </button>
                   ))}
                 </div>
@@ -941,10 +1013,11 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
                     <button
                       key={`driver-rate-${d.id}-${star}`}
                       onClick={() => onReview(d, star)}
-                      className="p-1 rounded-md bg-yellow-50 hover:bg-yellow-100 active:scale-90 transition-all"
+                      disabled={ratingInFlight === d.id}
+                      className={`p-1 rounded-md transition-all ${ratingInFlight === d.id ? 'bg-slate-100 opacity-60 cursor-not-allowed' : 'bg-yellow-50 hover:bg-yellow-100 active:scale-90'}`}
                       title={`Rate ${star} star${star > 1 ? 's' : ''}`}
                     >
-                      <Star size={14} className="text-yellow-500" />
+                      <Star size={14} className={`text-yellow-500 ${typeof d.rating === 'number' && Math.round(d.rating) >= star ? 'fill-yellow-500' : ''}`} />
                     </button>
                   ))}
                 </div>
@@ -997,7 +1070,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="px-6 pb-24"
+      className="px-4 sm:px-6 lg:px-10 pb-24 md:pb-10 max-w-[1400px] mx-auto"
     >
       <div className="bg-pink-primary rounded-[40px] p-8 text-white mb-8 vibrant-shadow relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
@@ -1098,7 +1171,7 @@ const TransportPage = ({ onPostRide, drivers, routeFares, onReview }: { onPostRi
   );
 };
 
-const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }: { onPostRide: () => void, onPostReview: () => void, onRefer: () => void, posts: CommunityPost[], onInterest: (id: string) => void, user: { name: string } }) => {
+const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, onDeletePost, user, isAdmin }: { onPostRide: () => void, onPostReview: () => void, onRefer: () => void, posts: CommunityPost[], onInterest: (id: string) => void, onDeletePost: (id: string) => void, user: { name: string }, isAdmin: boolean }) => {
   const [tab, setTab] = useState<'posts' | 'feedback'>('posts');
 
   return (
@@ -1114,8 +1187,8 @@ const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }
           onClick={onPostRide}
           className="flex-shrink-0 px-6 py-3 bg-pink-primary text-white font-semibold rounded-2xl flex items-center gap-2 shadow-lg shadow-pink-primary/20 text-[9px] uppercase tracking-wide active:scale-95 transition-all hover:brightness-110"
         >
-          <Car size={16} />
-          🛵 Pool Ride
+          <PlusCircle size={16} />
+          Add Post
         </button>
         <button 
           onClick={onPostReview}
@@ -1156,20 +1229,31 @@ const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-[32px] p-6 border border-pink-100 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-4">
+              >                <div className="flex justify-between items-start mb-4">
                   <div>
                     <h4 className="font-bold text-lg">{post.userName}</h4>
                     <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">{post.time}</p>
                   </div>
-                  <span className={`px-3 py-1.5 rounded-full text-[8px] font-semibold uppercase tracking-wide ${
-                    post.type === 'Ride' ? 'bg-pink-soft text-pink-primary' : 'bg-teal-soft text-teal-primary'
-                  }`}>
-                    {post.type === 'Ride' ? '🛵' : '🍕'} {post.type}
-                  </span>
+                  <div className="flex items-start gap-2">
+                    <span className={`px-3 py-1.5 rounded-full text-[8px] font-semibold uppercase tracking-wide ${
+                      post.type === 'Ride' ? 'bg-pink-soft text-pink-primary' : post.type === 'Order' ? 'bg-teal-soft text-teal-primary' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {post.type}
+                    </span>
+                    {isAdmin && (
+                      <button
+                        onClick={() => onDeletePost(post.id)}
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:brightness-110"
+                        title="Delete post"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <p className="text-sm mb-4 leading-relaxed">{post.request}</p>
+                <p className="text-sm mb-2 leading-relaxed">{post.request}</p>
+                {post.message && <p className="text-sm mb-4 leading-relaxed whitespace-pre-line text-slate-700 bg-slate-50 border border-slate-200 rounded-2xl p-3">{post.message}</p>}
 
                 {post.type === 'Ride' && post.destination && (
                   <div className="bg-blue-soft/50 border border-blue-100 p-3 rounded-2xl mb-4">
@@ -1185,24 +1269,30 @@ const FeedPage = ({ onPostRide, onPostReview, onRefer, posts, onInterest, user }
                 )}
 
                 <div className="flex gap-3">
-                  <a
-                    href={`https://wa.me/${post.contact?.replace(/[^0-9]/g, '') || ''}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-green-500 hover:brightness-110 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
-                  >
-                    <MessageCircle size={16} />
-                    DM on WhatsApp
-                  </a>
+                  {(post.contact?.replace(/[^0-9]/g, '') || '').length > 0 ? (
+                    <a
+                      href={`https://wa.me/${post.contact?.replace(/[^0-9]/g, '') || ''}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-green-500 hover:brightness-110 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
+                    >
+                      <MessageCircle size={16} />
+                      DM on WhatsApp
+                    </a>
+                  ) : (
+                    <div className="flex-1 bg-slate-100 text-slate-500 font-semibold py-3 rounded-xl flex items-center justify-center">
+                      Anonymous post
+                    </div>
+                  )}
                   <button
                     onClick={() => onInterest(post.id)}
-                    className={`flex-1 font-semibold py-3 rounded-xl text-[10px] uppercase tracking-wide transition-all active:scale-90 ${
+                    className={`font-semibold py-3 rounded-xl text-[10px] uppercase tracking-wide transition-all active:scale-90 ${(post.contact?.replace(/[^0-9]/g, '') || '').length > 0 ? 'flex-1' : 'w-full'} ${
                       post.interestedUsers?.includes('You')
                         ? 'bg-green-500 text-white'
                         : 'bg-pink-soft text-pink-primary hover:brightness-110'
                     }`}
                   >
-                    {post.interestedUsers?.includes('You') ? '✅ Interested!' : '👋 Interested'}
+                    {post.interestedUsers?.includes('You') ? 'Interested' : 'I am Interested'}
                   </button>
                 </div>
 
@@ -1255,13 +1345,12 @@ const AccountPage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
     { icon: ShieldAlert, label: 'Complaint History', color: 'text-slate-900' },
     { icon: Award, label: 'Volunteer Badge', color: 'text-pink-primary', badge: 'Coming Soon' },
   ];
-
   return (
     <motion.div 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="px-6 pb-24"
+      className="px-4 sm:px-6 lg:px-10 pb-24 md:pb-10 max-w-[1400px] mx-auto"
     >
       <div className="flex flex-col items-center gap-6 mb-10">
         <div className="relative">
@@ -1346,7 +1435,7 @@ const AccountPage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               initial={{ y: 100 }}
               animate={{ y: 0 }}
               exit={{ y: 100 }}
-              className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
+              className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
             >
               <h3 className="text-2xl font-bold mb-2 text-center">How was your PinkIt experience?</h3>
               <p className="text-slate-500 text-center mb-8 text-sm">Your feedback helps the community.</p>
@@ -1410,7 +1499,7 @@ const AccountPage = ({ user, onLogout, onComplaint, onFeedback }: { user: { name
               initial={{ y: 100 }}
               animate={{ y: 0 }}
               exit={{ y: 100 }}
-              className="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8"
+              className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
             >
               <h3 className="text-2xl font-bold mb-6">Raise a Complaint</h3>
               
@@ -1633,7 +1722,7 @@ const AdminPanel = ({ vendors, drivers, onAddVendor, onEditVendor, onDeleteVendo
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="px-6 pb-24"
+      className="px-4 sm:px-6 lg:px-10 pb-24 md:pb-10 max-w-[1400px] mx-auto"
     >
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[40px] p-8 text-white mb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
@@ -1663,7 +1752,7 @@ const AdminPanel = ({ vendors, drivers, onAddVendor, onEditVendor, onDeleteVendo
       {tab === 'vendors' && (
         <div className="space-y-4">
           <button
-            onClick={() => setShowAddVendor(true)}
+            onClick={() => { const name = window.prompt('Vendor name'); const category = window.prompt('Category'); const phone = window.prompt('Phone (with country code)'); if (!name || !category || !phone) return; onAddVendor({ id: '', name, category: category as Category, phone, whatsapp: phone, image: '', isVerified: true }); }}
             className="w-full py-3 bg-pink-primary text-white font-semibold rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:brightness-110"
           >
             <PlusCircle size={18} />
@@ -1702,7 +1791,7 @@ const AdminPanel = ({ vendors, drivers, onAddVendor, onEditVendor, onDeleteVendo
       {tab === 'drivers' && (
         <div className="space-y-4">
           <button
-            onClick={() => setShowAddDriver(true)}
+            onClick={() => { const name = window.prompt('Driver name'); const type = window.prompt('Type: Auto or Cab'); const phone = window.prompt('Phone (with country code)'); if (!name || !type || !phone) return; const normalized = type.toLowerCase() === 'cab' ? 'Cab' : 'Auto'; onAddDriver({ id: '', name, type: normalized as 'Auto' | 'Cab', phone, whatsapp: phone, isVerified: true }); }}
             className="w-full py-3 bg-teal-primary text-white font-semibold rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:brightness-110"
           >
             <PlusCircle size={18} />
@@ -1766,6 +1855,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [ratingInFlight, setRatingInFlight] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToAuth((authUser) => {
@@ -1823,25 +1913,38 @@ export default function App() {
     setActiveTab('categories');
   };
 
-  const handlePostToCommunity = async (type: 'Ride' | 'Order', details: any) => {
+  const handlePostToCommunity = async (type: 'Ride' | 'Order' | 'Open', details: any) => {
     if (!user) return;
-    try {
-      const request = type === 'Ride' 
-        ? `Heading to ${details.dest}. Anyone wants to share a ride? 🛵`
-        : `Ordering from ${details.place}. Anyone wants to pool? 🍜`;
-        
-      await dataService.postCommunityPost({
-        userName: user.name,
+    try {      const cleanedMessage = details.message?.trim() || '';
+      if (type === 'Open' && cleanedMessage.length === 0) {
+        alert('Please write something for your open post.');
+        return;
+      }
+
+      const request =
+        type === 'Ride'
+          ? `Heading to ${details.dest}. Anyone wants to share a ride?`
+          : type === 'Order'
+            ? `Ordering from ${details.place}. Anyone wants to pool?`
+            : cleanedMessage;
+
+      const postPayload: any = {
+        userName: details.anonymous ? 'Anonymous' : user.name,
         request,
+        message: type === 'Open' ? '' : cleanedMessage,
+        imageData: details.imageData || '',
+        imageName: details.imageName || '',
         time: 'Just now',
         type,
-        contact: user.email,
+        contact: details.anonymous ? '' : user.email,
         userId: user.uid,
-        destination: details.dest,
-        departureTime: details.time
-      });
-      fetchAllData(true);
-      setActiveTab('community');
+      };
+      if (type === 'Ride' && details.dest) postPayload.destination = details.dest;
+      if ((type === 'Ride' || type === 'Order') && details.time) postPayload.departureTime = details.time;
+
+      await dataService.postCommunityPost(postPayload);
+      await fetchAllData(true);
+      setActiveTab('feed');
     } catch (err) {
       alert(`Failed to post ${type.toLowerCase()} request.`);
     }
@@ -1858,16 +1961,18 @@ export default function App() {
         comment,
         date: new Date().toISOString()
       });
-      fetchAllData(true);
+      await fetchAllData(true);
+      return true;
     } catch (err) {
       alert('Failed to post review.');
+      return false;
     }
   };
 
   const handlePostReview = async (rating: number, comment: string) => {
     if (!reviewTarget) return;
-    await submitReviewForTarget(reviewTarget, rating, comment);
-    alert('Thank you for your review!');
+    const ok = await submitReviewForTarget(reviewTarget, rating, comment);
+    if (ok) alert('Thank you for your review!');
   };
 
   const handleReferContact = async (data: any) => {
@@ -1934,27 +2039,60 @@ export default function App() {
     setAppData({ ...appData, communityPosts: newPosts });
   };
 
-  const handleDeleteVendor = (vendorId: string) => {
-    if (window.confirm('Are you sure you want to delete this vendor?')) {
-      if (appData) {
-        setAppData({
-          ...appData,
-          vendors: appData.vendors.filter(v => v.id !== vendorId)
-        });
-      }
-      alert('Vendor deleted!');
+  const handleDeleteCommunityPost = async (postId: string) => {
+    if (!isAdmin) return;
+    if (!window.confirm('Delete this community post?')) return;
+    try {
+      await dataService.deleteCommunityPost(postId);
+      await fetchAllData(true);
+    } catch (err) {
+      alert('Failed to delete post.');
     }
   };
 
-  const handleDeleteDriver = (driverId: string) => {
-    if (window.confirm('Are you sure you want to delete this driver?')) {
-      if (appData) {
-        setAppData({
-          ...appData,
-          drivers: appData.drivers.filter(d => d.id !== driverId)
-        });
-      }
-      alert('Driver deleted!');
+  const handleAddVendor = async (v: Vendor) => {
+    if (!isAdmin || !user) return;
+    try {
+      await dataService.addVendor({ ...v, userId: user.uid });
+      await fetchAllData(true);
+      alert('Vendor added.');
+    } catch (err) {
+      alert('Failed to add vendor.');
+    }
+  };
+
+  const handleAddDriver = async (d: Driver) => {
+    if (!isAdmin || !user) return;
+    try {
+      await dataService.addDriver({ ...d, userId: user.uid });
+      await fetchAllData(true);
+      alert('Driver added.');
+    } catch (err) {
+      alert('Failed to add driver.');
+    }
+  };
+
+  const handleDeleteVendor = async (vendorId: string) => {
+    if (!isAdmin) return;
+    if (!window.confirm('Are you sure you want to delete this vendor?')) return;
+    try {
+      await dataService.deleteVendor(vendorId);
+      await fetchAllData(true);
+      alert('Vendor deleted.');
+    } catch (err) {
+      alert('Failed to delete vendor.');
+    }
+  };
+
+  const handleDeleteDriver = async (driverId: string) => {
+    if (!isAdmin) return;
+    if (!window.confirm('Are you sure you want to delete this driver?')) return;
+    try {
+      await dataService.deleteDriver(driverId);
+      await fetchAllData(true);
+      alert('Driver deleted.');
+    } catch (err) {
+      alert('Failed to delete driver.');
     }
   };
 
@@ -1999,7 +2137,7 @@ export default function App() {
 
     switch (activeTab) {
       case 'home':
-        return <HomePage onCategoryClick={handleCategoryClick} vendors={filteredVendors} drivers={filteredDrivers} />;
+        return <HomePage onCategoryClick={handleCategoryClick} onViewSpots={() => setActiveTab('spots')} vendors={filteredVendors} drivers={filteredDrivers} />;
       case 'categories':
         return (
           <CategoriesPage 
@@ -2009,9 +2147,12 @@ export default function App() {
             vendors={filteredVendors}
             drivers={filteredDrivers}
             essentialServices={appData?.essentialServices || []}
-            onReview={(v, rating) => {
+            onReview={async (v, rating) => {
               if (typeof rating === 'number') {
-                submitReviewForTarget(v, rating, 'Quick rating from contact card');
+                setRatingInFlight(v.id);
+                const ok = await submitReviewForTarget(v, rating, `Quick ${rating}-star rating from contact card`);
+                setRatingInFlight(null);
+                if (ok) alert(`Rated ${v.name} with ${rating} star${rating > 1 ? 's' : ''}.`);
                 return;
               }
               setReviewTarget(v);
@@ -2019,12 +2160,14 @@ export default function App() {
             }}
             onCategorySelect={(cat) => setSelectedCategory(cat)}
             onPostRide={() => setIsPostRideOpen(true)}
+            ratingInFlight={ratingInFlight}
           />
         );
+      case 'spots': return <PopularSpotsPage />;
       case 'feed':
         return (
           <FeedPage 
-            onPostRide={() => setIsPostRideOpen(true)} 
+            onPostRide={() => setIsPostRideOpen(true)}
             onPostReview={() => {
               setReviewTarget(null);
               setIsReviewOpen(true);
@@ -2032,25 +2175,20 @@ export default function App() {
             onRefer={() => setIsReferOpen(true)}
             posts={appData?.communityPosts || []}
             onInterest={handleInterest}
+            onDeletePost={handleDeleteCommunityPost}
             user={user}
+            isAdmin={isAdmin}
           />
         );
-      case 'forum':
-        return (
-          <ForumPage 
-            user={user}
-            onPostThread={() => {}}
-          />
-        );
-      case 'admin':
+case 'admin':
         return (
           <AdminPanel
             vendors={appData?.vendors || []}
             drivers={appData?.drivers || []}
-            onAddVendor={() => {}}
+            onAddVendor={handleAddVendor}
             onEditVendor={() => {}}
             onDeleteVendor={handleDeleteVendor}
-            onAddDriver={() => {}}
+            onAddDriver={handleAddDriver}
             onEditDriver={() => {}}
             onDeleteDriver={handleDeleteDriver}
           />
@@ -2058,7 +2196,7 @@ export default function App() {
       case 'account':
         return <AccountPage user={user} onLogout={handleLogout} onComplaint={handleComplaint} onFeedback={handleAppFeedback} />;
       default:
-        return <HomePage onCategoryClick={handleCategoryClick} vendors={filteredVendors} drivers={filteredDrivers} />;
+        return <HomePage onCategoryClick={handleCategoryClick} onViewSpots={() => setActiveTab('spots')} vendors={filteredVendors} drivers={filteredDrivers} />;
     }
   };
 
@@ -2066,8 +2204,8 @@ export default function App() {
     switch (activeTab) {
       case 'home': return 'PinkIt';
       case 'categories': return selectedCategory ? `${selectedCategory}` : 'Categories';
-      case 'feed': return 'Posts & Feed';
-      case 'forum': return 'Community Forum';
+      case 'spots': return 'Popular Spots';
+      case 'feed': return 'Community';
       case 'admin': return 'Admin Panel';
       case 'account': return 'My Account';
       default: return 'PinkIt';
@@ -2109,7 +2247,7 @@ export default function App() {
         isAdmin={isAdmin}
       />
 
-      <div className="w-full md:flex-1 md:ml-64 max-w-2xl md:max-w-none bg-white/40 md:backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
+      <div className="w-full md:flex-1 md:ml-64 bg-white/40 md:backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
         <Header 
           title={getPageTitle()} 
           showSearch={activeTab === 'home' || activeTab === 'categories'} 
@@ -2166,6 +2304,82 @@ export default function App() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
