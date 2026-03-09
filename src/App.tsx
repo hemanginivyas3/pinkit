@@ -626,6 +626,19 @@ const HomePage = ({ onCategoryClick, onViewSpots, vendors, drivers }: { onCatego
         </div>
       </div>
 
+      <div className="mb-8 bg-gradient-to-r from-white to-pink-soft/40 rounded-[28px] p-5 sm:p-6 border-2 border-pink-200 shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-base sm:text-lg font-black text-pink-primary tracking-tight">Join our WhatsApp community {"\uD83D\uDE80"}</p>
+        <a
+          href="https://chat.whatsapp.com/Lmyj25Z03Jy3ZA805pqmin"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-green-500 text-white text-sm font-black uppercase tracking-wide rounded-2xl shadow-lg shadow-green-500/25 hover:brightness-110 active:scale-95 transition-all"
+        >
+          <MessageCircle size={14} />
+          Join Now
+        </a>
+      </div>
+
       {/* Category Grid */}
       <h2 className="text-2xl font-bold mb-6 text-pink-primary">⚡ Quick Fixes</h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-10">
@@ -2301,6 +2314,9 @@ case 'admin':
     </div>
   );
 }
+
+
+
 
 
 
