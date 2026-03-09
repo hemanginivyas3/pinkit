@@ -665,7 +665,7 @@ const HomePage = ({ onCategoryClick, onViewSpots, vendors, drivers }: { onCatego
   );
 };
 
-const PopularSpotsPage = () => {
+const PopularSpotsPage = ({ spots }: { spots: typeof ROHTAK_SPOTS }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -678,7 +678,7 @@ const PopularSpotsPage = () => {
         <span className="text-[10px] font-semibold bg-pink-primary text-white px-3 py-1 rounded-full uppercase tracking-wide">Rohtak</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {ROHTAK_SPOTS.map((spot) => (
+        {spots.map((spot) => (
           <div key={spot.id} className="bg-white rounded-[28px] border border-pink-100 shadow-sm p-5">
             <div className="flex items-start justify-between gap-3 mb-3">
               <h3 className="text-lg font-bold text-slate-900 leading-tight">{spot.name}</h3>
@@ -792,18 +792,21 @@ const SuggestContactModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, o
   );
 };
 
-const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide, ratingInFlight }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver, rating?: number) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void, ratingInFlight: string | null }) => {
+const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, essentialServices, onReview, onCategorySelect, onPostRide, ratingInFlight, searchQuery }: { selectedCategory: Category | null, onBack: () => void, onRefer: () => void, vendors: Vendor[], drivers: Driver[], essentialServices: EssentialService[], onReview: (v: Vendor | Driver, rating?: number) => void, onCategorySelect: (cat: Category) => void, onPostRide: () => void, ratingInFlight: string | null, searchQuery: string }) => {
   const filteredVendors = selectedCategory 
     ? vendors.filter(v => v.category === selectedCategory)
     : vendors;
 
   const filteredDrivers = selectedCategory && ['Auto', 'Cab'].includes(selectedCategory)
     ? drivers.filter(d => d.type === selectedCategory)
-    : [];
+    : searchQuery.trim().length > 0
+      ? drivers
+      : [];
 
   const categories: Category[] = [
     'Grocery', 'Dhaba', 'Street Food', 'Auto', 'Cab', 'Parcel', 'Pharmacy', 'Hospital', 'Salon', 'Laundry', 'Tailor', 'Flowers', 'Delivery', 'Tech Repair', 'Mobile'
   ];
+  const isSearching = !selectedCategory && searchQuery.trim().length > 0;
   const getEmoji = (cat: string) => {
     switch (cat) {
       case 'Grocery': return '🛒';
@@ -852,7 +855,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
         </button>
       </div>
 
-      {!selectedCategory && (
+      {!selectedCategory && !isSearching && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-10">
           {categories.map((cat) => (
             <motion.button
@@ -880,7 +883,7 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
           </div>
         )}
 
-        {filteredVendors.length === 0 && !selectedCategory && (
+        {filteredVendors.length === 0 && filteredDrivers.length === 0 && !selectedCategory && (
           <div className="col-span-full text-center py-12 px-6 bg-white/80 rounded-[40px] border-2 border-dashed border-pink-200">
             <p className="text-slate-600 font-black text-lg mb-4">🔍 No results</p>
             <p className="text-slate-400 font-bold text-sm">Try a different search or select a category above</p>
@@ -1015,6 +1018,25 @@ const CategoriesPage = ({ selectedCategory, onBack, onRefer, vendors, drivers, e
           </motion.div>
         ))}
       </div>
+
+      {!selectedCategory && isSearching && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-10">
+          {categories.map((cat) => (
+            <motion.button
+              key={cat}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onCategorySelect(cat)}
+              className="bg-white p-6 rounded-[32px] border border-pink-100 shadow-sm flex flex-col items-center gap-3 group"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-pink-soft flex items-center justify-center text-3xl group-hover:rotate-12 transition-transform">
+                {getEmoji(cat)}
+              </div>
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest text-center">{cat}</span>
+            </motion.button>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 };
@@ -1868,6 +1890,12 @@ export default function App() {
   useEffect(() => {
     fetchAllData();
   }, []);
+  useEffect(() => {
+    if (activeTab === 'home' && searchQuery.trim()) {
+      setSelectedCategory(null);
+      setActiveTab('categories');
+    }
+  }, [activeTab, searchQuery]);
 
   const handleCategoryClick = (cat: Category) => {
     setSelectedCategory(cat);
@@ -2055,19 +2083,28 @@ export default function App() {
     }
   };
 
-  const filteredVendors = (appData?.vendors || []).filter(v => {
-    const matchesSearch = searchQuery === '' || 
-      v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const normalizedSearch = searchQuery.trim().toLowerCase();
 
-  const filteredDrivers = (appData?.drivers || []).filter(d => {
-    const matchesSearch = searchQuery === '' || 
-      d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.type.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredVendors = (appData?.vendors || []).filter((v) =>
+    normalizedSearch === '' || (v.category || '').toLowerCase().includes(normalizedSearch)
+  );
+
+  const filteredDrivers = (appData?.drivers || []).filter((d) =>
+    normalizedSearch === '' || (d.type || '').toLowerCase().includes(normalizedSearch)
+  );
+
+  const includesSearch = (...values: Array<string | undefined | null>) => {
+    if (normalizedSearch === '') return true;
+    return values.some((value) => (value || '').toLowerCase().includes(normalizedSearch));
+  };
+
+  const filteredCommunityPosts = (appData?.communityPosts || []).filter((post) =>
+    includesSearch(post.userName, post.request, post.message, post.type, post.destination, post.contact)
+  );
+
+  const filteredSpots = ROHTAK_SPOTS.filter((spot) =>
+    includesSearch(spot.name, spot.type, spot.location, spot.description)
+  );
 
   const renderPage = (isLoading: boolean, appData: AppData | null, error: string | null, searchQuery: string) => {
     if (isLoading && !appData) {
@@ -2120,9 +2157,10 @@ export default function App() {
             onCategorySelect={(cat) => setSelectedCategory(cat)}
             onPostRide={() => setIsPostRideOpen(true)}
             ratingInFlight={ratingInFlight}
+            searchQuery={searchQuery}
           />
         );
-      case 'spots': return <PopularSpotsPage />;
+      case 'spots': return <PopularSpotsPage spots={filteredSpots} />;
       case 'feed':
         return (
           <FeedPage 
@@ -2132,7 +2170,7 @@ export default function App() {
               setIsReviewOpen(true);
             }}
             onRefer={() => setIsReferOpen(true)}
-            posts={appData?.communityPosts || []}
+            posts={filteredCommunityPosts}
             onInterest={handleInterest}
             onDeletePost={handleDeleteCommunityPost}
             user={user}
@@ -2142,8 +2180,8 @@ export default function App() {
 case 'admin':
         return (
           <AdminPanel
-            vendors={appData?.vendors || []}
-            drivers={appData?.drivers || []}
+            vendors={filteredVendors}
+            drivers={filteredDrivers}
             onAddVendor={handleAddVendor}
             onEditVendor={() => {}}
             onDeleteVendor={handleDeleteVendor}
@@ -2209,7 +2247,7 @@ case 'admin':
       <div className="w-full md:flex-1 md:ml-64 bg-white/40 md:backdrop-blur-sm min-h-screen relative pb-28 md:pb-6 shadow-2xl md:shadow-none shadow-pink-primary/5 z-10 border-x border-pink-100/50 md:border-l-0">
         <Header 
           title={getPageTitle()} 
-          showSearch={activeTab === 'home' || activeTab === 'categories'} 
+          showSearch={true} 
           onSearch={setSearchQuery} 
           onRefresh={() => fetchAllData(true)}
           isLoading={isLoading}
@@ -2263,6 +2301,18 @@ case 'admin':
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
